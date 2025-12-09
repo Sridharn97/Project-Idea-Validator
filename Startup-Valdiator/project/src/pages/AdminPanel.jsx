@@ -1,19 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Filter, Eye, Check, X, AlertCircle, Trash2, Search, Loader2 } from 'lucide-react';
 import axios from '../axiosConfig';
 import toast from 'react-hot-toast';
+import { AuthContext } from '../context/AuthContext';
 
 const AdminPanel = () => {
+  const { user } = useContext(AuthContext);
   const [ideas, setIdeas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('Pending');
   const [searchQuery, setSearchQuery] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
 
+  // Fetch ideas on mount and when filters change
   useEffect(() => {
-    fetchIdeas();
-  }, [statusFilter, searchQuery]);
+    if (user?.token) {
+      fetchIdeas();
+    }
+  }, [statusFilter, searchQuery, user?.token]);
 
   const fetchIdeas = async () => {
     try {
