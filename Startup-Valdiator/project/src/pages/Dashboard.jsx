@@ -10,7 +10,7 @@ import AuthContext from '../context/AuthContext';
 const Dashboard = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useContext(AuthContext);
+  const { user, loading: authLoading } = useContext(AuthContext);
   const [ideas, setIdeas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -19,8 +19,11 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('all');
 
   useEffect(() => {
-    fetchUserIdeas();
-  }, [user]);
+    // Fetch ideas when user is authenticated and auth context is done loading
+    if (user?.token && !authLoading) {
+      fetchUserIdeas();
+    }
+  }, [user?.token, authLoading]);
 
   useEffect(() => {
     const pathParts = window.location.pathname.split('/');
@@ -44,6 +47,7 @@ const Dashboard = () => {
       setIdeas(response.data);
     } catch (error) {
       console.error('Error fetching ideas:', error);
+      console.error('Full error:', error.response?.data);
       toast.error('Failed to load your ideas');
     } finally {
       setLoading(false);

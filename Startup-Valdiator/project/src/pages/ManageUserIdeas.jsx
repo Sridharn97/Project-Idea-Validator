@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Filter, Eye, Check, X, AlertCircle, Trash2, Search, Loader2, Edit, User as UserIcon, Calendar, Tag } from 'lucide-react';
 import axios from '../axiosConfig';
 import toast from 'react-hot-toast';
+import AuthContext from '../context/AuthContext';
 
 const ManageUserIdeas = () => {
+  const { user, loading: authLoading } = useContext(AuthContext);
   const [ideas, setIdeas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('All');
@@ -16,9 +18,12 @@ const ManageUserIdeas = () => {
   const categories = ['All', 'SaaS', 'E-commerce', 'Mobile App', 'FinTech', 'HealthTech', 'EdTech', 'Social Media', 'AI/ML', 'IoT', 'Other'];
 
   useEffect(() => {
-    fetchIdeas();
+    // Only fetch when auth is ready
+    if (!authLoading && user?.token) {
+      fetchIdeas();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [statusFilter, categoryFilter]);
+  }, [statusFilter, categoryFilter, authLoading, user?.token]);
   
   // Fetch all ideas from admin endpoint
   const fetchIdeas = async () => {
