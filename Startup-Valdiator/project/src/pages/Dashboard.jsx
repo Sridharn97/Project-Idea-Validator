@@ -21,6 +21,7 @@ const Dashboard = () => {
   useEffect(() => {
     // Fetch ideas when user is authenticated and auth context is done loading
     if (user?.token && !authLoading) {
+      console.log('Fetching user ideas...', { user: user._id, token: !!user.token });
       fetchUserIdeas();
     }
   }, [user?.token, authLoading]);
@@ -39,15 +40,26 @@ const Dashboard = () => {
     }
   }, [window.location.pathname, ideas]);
 
-  // ✅ Fetch all ideas of the logged-in user
-  const fetchUserIdeas = async () => {
+  // ✅ Fetch all ideas of the logged-in user with retry logic
+  const fetchUserIdeas = async (retryCount = 0) => {
     try {
       setLoading(true);
       const response = await axios.get('/api/ideas/user/ideas');
+      console.log('Ideas fetched successfully:', response.data);
       setIdeas(response.data);
     } catch (error) {
       console.error('Error fetching ideas:', error);
       console.error('Full error:', error.response?.data);
+      
+      // Retry logic for network errors
+      if (error.code === 'ECONNABORTED' || error.code === 'ERR_NETWORK') {
+        if (retryCount < 2) {
+          console.log(`Retrying... (attempt ${retryCount + 1})`);
+          setTimeout(() => fetchUserIdeas(retryCount + 1), 2000);
+          return;
+        }
+      }
+      
       toast.error('Failed to load your ideas');
     } finally {
       setLoading(false);

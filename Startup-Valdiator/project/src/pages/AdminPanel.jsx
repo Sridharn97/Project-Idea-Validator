@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 import { AuthContext } from '../context/AuthContext';
 
 const AdminPanel = () => {
-  const { user } = useContext(AuthContext);
+  const { user, loading: authLoading } = useContext(AuthContext);
   const [ideas, setIdeas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('Pending');
@@ -15,23 +15,36 @@ const AdminPanel = () => {
 
   // Fetch ideas on mount and when filters change
   useEffect(() => {
-    if (user?.token) {
+    if (user?.token && !authLoading) {
+      console.log('Fetching admin panel ideas...', { admin: user.role, token: !!user.token });
       fetchIdeas();
     }
-  }, [statusFilter, searchQuery, user?.token]);
+  }, [statusFilter, searchQuery, user?.token, authLoading]);
 
-  const fetchIdeas = async () => {
+  const fetchIdeas = async (retryCount = 0) => {
     try {
       setLoading(true);
       const params = {};
       if (statusFilter !== 'All') params.status = statusFilter;
       if (searchQuery) params.search = searchQuery;
 
+      console.log('Making admin panel ideas request with params:', params);
       // ✅ API call now uses full backend URL automatically
       const response = await axios.get('/api/admin/ideas', { params });
+      console.log('Admin panel ideas fetched successfully:', response.data);
       setIdeas(response.data);
     } catch (error) {
       console.error('Error fetching ideas:', error);
+      
+      // Retry logic for network errors
+      if (error.code === 'ECONNABORTED' || error.code === 'ERR_NETWORK') {
+        if (retryCount < 2) {
+          console.log(`Retrying admin panel fetch... (attempt ${retryCount + 1})`);
+          setTimeout(() => fetchIdeas(retryCount + 1), 2000);
+          return;
+        }
+      }
+      
       toast.error('Failed to load ideas');
     } finally {
       setLoading(false);

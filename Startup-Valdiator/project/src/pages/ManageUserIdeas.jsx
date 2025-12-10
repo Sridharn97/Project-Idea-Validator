@@ -20,13 +20,14 @@ const ManageUserIdeas = () => {
   useEffect(() => {
     // Only fetch when auth is ready
     if (!authLoading && user?.token) {
+      console.log('Fetching admin ideas...', { admin: user.role, token: !!user.token });
       fetchIdeas();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [statusFilter, categoryFilter, authLoading, user?.token]);
   
-  // Fetch all ideas from admin endpoint
-  const fetchIdeas = async () => {
+  // Fetch all ideas from admin endpoint with retry logic
+  const fetchIdeas = async (retryCount = 0) => {
     try {
       setLoading(true);
       const params = {};
@@ -35,7 +36,9 @@ const ManageUserIdeas = () => {
       // Only filter by status if not 'All'
       if (statusFilter !== 'All') params.status = statusFilter;
 
+      console.log('Making admin ideas request with params:', params);
       const response = await axios.get('/api/admin/ideas', { params });
+      console.log('Admin ideas fetched successfully:', response.data);
       let fetchedIdeas = response.data;
 
       // Client-side category filtering (since admin endpoint doesn't support it)
@@ -58,6 +61,16 @@ const ManageUserIdeas = () => {
       setIdeas(fetchedIdeas);
     } catch (error) {
       console.error('Error fetching ideas:', error);
+      
+      // Retry logic for network errors
+      if (error.code === 'ECONNABORTED' || error.code === 'ERR_NETWORK') {
+        if (retryCount < 2) {
+          console.log(`Retrying admin ideas fetch... (attempt ${retryCount + 1})`);
+          setTimeout(() => fetchIdeas(retryCount + 1), 2000);
+          return;
+        }
+      }
+      
       toast.error('Failed to load ideas');
     } finally {
       setLoading(false);
