@@ -2,7 +2,11 @@
   "buildCommand": "npm run build:frontend",
   "installCommand": "npm install",
   "outputDirectory": "dist",
-  "env": {
-    "VITE_API_URL": "https://backend-2-hq3s.onrender.com"
-  }
+  "framework": "vite",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
