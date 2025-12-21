@@ -18,10 +18,15 @@ const ManageUserIdeas = () => {
   const categories = ['All', 'SaaS', 'E-commerce', 'Mobile App', 'FinTech', 'HealthTech', 'EdTech', 'Social Media', 'AI/ML', 'IoT', 'Other'];
 
   useEffect(() => {
-    // Only fetch when auth is ready
-    if (!authLoading && user?.token) {
-      console.log('Fetching admin ideas...', { admin: user.role, token: !!user.token });
-      fetchIdeas();
+    // Only wait for auth to finish loading, then fetch immediately
+    if (!authLoading) {
+      if (user?.token) {
+        console.log('Fetching admin ideas...', { admin: user.role, token: !!user.token });
+        fetchIdeas();
+      } else {
+        // If no user token after loading, set loading to false
+        setLoading(false);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [statusFilter, categoryFilter, authLoading, user?.token]);

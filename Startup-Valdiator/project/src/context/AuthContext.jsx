@@ -4,18 +4,26 @@ import axios from '../axiosConfig';
 export const AuthContext = createContext(); 
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  // Initialize user from localStorage immediately to avoid delay
+  const [user, setUser] = useState(() => {
+    try {
+      const storedUser = localStorage.getItem('user');
+      return storedUser ? JSON.parse(storedUser) : null;
+    } catch {
+      return null;
+    }
+  });
+  const [loading, setLoading] = useState(false); // Start as false since we load synchronously
   const [error, setError] = useState(null);
 
-  // Load user from localStorage on initial load
+  // Set axios auth header immediately when user is available
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    if (user?.token) {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${user.token}`;
+    } else {
+      delete axios.defaults.headers.common['Authorization'];
     }
-    setLoading(false);
-  }, []);
+  }, [user]);
 
   // Register user
   const register = async (userData) => {
@@ -57,17 +65,6 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
-  // Set axios auth header
-  useEffect(() => {
-    const setAuthToken = () => {
-      if (user?.token) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ${user.token}`;
-      } else {
-        delete axios.defaults.headers.common['Authorization'];
-      }
-    };
-    setAuthToken();
-  }, [user]);
 
   const value = {
     user,

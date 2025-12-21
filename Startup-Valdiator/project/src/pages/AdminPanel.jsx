@@ -15,9 +15,15 @@ const AdminPanel = () => {
 
   // Fetch ideas on mount and when filters change
   useEffect(() => {
-    if (user?.token && !authLoading) {
-      console.log('Fetching admin panel ideas...', { admin: user.role, token: !!user.token });
-      fetchIdeas();
+    // Only wait for auth to finish loading, then fetch immediately
+    if (!authLoading) {
+      if (user?.token) {
+        console.log('Fetching admin panel ideas...', { admin: user.role, token: !!user.token });
+        fetchIdeas();
+      } else {
+        // If no user token after loading, set loading to false
+        setLoading(false);
+      }
     }
   }, [statusFilter, searchQuery, user?.token, authLoading]);
 

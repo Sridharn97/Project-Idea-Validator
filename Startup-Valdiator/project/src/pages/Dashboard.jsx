@@ -19,10 +19,15 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('all');
 
   useEffect(() => {
-    // Fetch ideas when user is authenticated and auth context is done loading
-    if (user?.token && !authLoading) {
-      console.log('Fetching user ideas...', { user: user._id, token: !!user.token });
-      fetchUserIdeas();
+    // Only wait for auth to finish loading, then fetch immediately
+    if (!authLoading) {
+      if (user?.token) {
+        console.log('Fetching user ideas...', { user: user._id, token: !!user.token });
+        fetchUserIdeas();
+      } else {
+        // If no user token after loading, set loading to false
+        setLoading(false);
+      }
     }
   }, [user?.token, authLoading]);
 
