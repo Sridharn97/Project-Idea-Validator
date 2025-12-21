@@ -73,16 +73,25 @@ const Login = () => {
         navigate('/dashboard');
       }
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Login failed';
+      let errorMessage = error.response?.data?.message || error.message || 'Login failed';
+      
+      // Handle timeout errors specifically
+      if (error.code === 'ECONNABORTED' || errorMessage.includes('timeout')) {
+        errorMessage = 'Request timed out. The server may be starting up. Please wait a moment and try again.';
+      } else if (error.response?.status === 404) {
+        errorMessage = 'Server endpoint not found. The backend may be down. Please try again in a moment.';
+      }
+      
       toast.error(errorMessage, {
         style: {
           borderRadius: '10px',
           background: '#ff3333',
           color: '#fff',
         },
+        duration: 5000, // Show longer for timeout errors
       });
       
-      if (errorMessage === 'Invalid email or password') {
+      if (errorMessage === 'Invalid email or password' || errorMessage.includes('Invalid email')) {
         setErrors({
           email: ' ',
           password: 'Invalid email or password',

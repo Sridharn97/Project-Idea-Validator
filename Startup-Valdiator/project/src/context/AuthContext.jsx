@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import axios from '../axiosConfig';
+import axios, { retryRequest } from '../axiosConfig';
 
 export const AuthContext = createContext(); 
 
@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, [user]);
 
-  // Register user
+  // Register user with retry logic for Render cold starts
   const register = async (userData) => {
     try {
       setLoading(true);
@@ -34,7 +34,13 @@ export const AuthProvider = ({ children }) => {
       // Log the API URL being used (for debugging)
       console.log('Register attempt - API URL:', axios.defaults.baseURL);
       
-      const response = await axios.post('/api/auth/register', userData);
+      // Use retry logic for timeout/network errors
+      const response = await retryRequest({
+        method: 'post',
+        url: '/api/auth/register',
+        data: userData
+      });
+      
       localStorage.setItem('user', JSON.stringify(response.data));
       setUser(response.data);
       setError(null);
@@ -51,8 +57,12 @@ export const AuthProvider = ({ children }) => {
       
       let errorMessage = 'Registration failed';
       
-      if (err.code === 'ERR_NETWORK' || err.code === 'ECONNABORTED') {
+      if (err.code === 'ECONNABORTED') {
+        errorMessage = 'Request timed out. The server may be starting up. Please try again in a moment.';
+      } else if (err.code === 'ERR_NETWORK') {
         errorMessage = 'Network error: Unable to reach the server. Please check your connection.';
+      } else if (err.response?.status === 404) {
+        errorMessage = 'Server endpoint not found. The backend may be down or the URL is incorrect.';
       } else if (err.response?.status === 400 || err.response?.status === 409) {
         errorMessage = err.response?.data?.message || 'Registration failed. Please check your information.';
       } else if (err.response?.status >= 500) {
@@ -72,8 +82,8 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Login user
-  const login = async (credentials) => {
+  // Login user with retry logic for Render cold starts
+  const login = async (credentials, retryCount = 0) => {
     try {
       setLoading(true);
       setError(null);
@@ -81,7 +91,13 @@ export const AuthProvider = ({ children }) => {
       // Log the API URL being used (for debugging)
       console.log('Login attempt - API URL:', axios.defaults.baseURL);
       
-      const response = await axios.post('/api/auth/login', credentials);
+      // Use retry logic for timeout/network errors
+      const response = await retryRequest({
+        method: 'post',
+        url: '/api/auth/login',
+        data: credentials
+      });
+      
       localStorage.setItem('user', JSON.stringify(response.data));
       setUser(response.data);
       setError(null);
@@ -98,8 +114,12 @@ export const AuthProvider = ({ children }) => {
       
       let errorMessage = 'Login failed';
       
-      if (err.code === 'ERR_NETWORK' || err.code === 'ECONNABORTED') {
+      if (err.code === 'ECONNABORTED') {
+        errorMessage = 'Request timed out. The server may be starting up. Please try again in a moment.';
+      } else if (err.code === 'ERR_NETWORK') {
         errorMessage = 'Network error: Unable to reach the server. Please check your connection.';
+      } else if (err.response?.status === 404) {
+        errorMessage = 'Server endpoint not found. The backend may be down or the URL is incorrect.';
       } else if (err.response?.status === 401) {
         errorMessage = err.response?.data?.message || 'Invalid email or password';
       } else if (err.response?.status >= 500) {
