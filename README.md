@@ -6,7 +6,7 @@
 ### 🔥 **Features:**
 - **User Authentication** 🔐: JWT-based authentication for user login and registration.
 - **Role-based Access** 👥: Users and admins have different roles with specific access permissions.
-- **Startup Idea Management** 💡: Users can submit, edit, delete, and interact with startup ideas.
+- **Project Idea Management** 💡: Users can submit, edit, delete, and interact with startup ideas.
 - **Admin Panel** 🛠️: Admins can approve, reject, delete ideas, and moderate comments.
 - **Real-time Voting (Optional)** ⚡: Use Socket.io to update vote counts in real time.
 
