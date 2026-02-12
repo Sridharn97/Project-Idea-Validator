@@ -34,8 +34,8 @@ app.use(express.json());
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://sridharn2023cse:sridhar@cluster0.5hs1joo.mongodb.net/Startups')
-  .then(() => console.log('✅ MongoDB connected...'))
-  .catch(err => console.error('❌ MongoDB connection error:', err));
+  .then(() => console.log('MongoDB connected...'))
+  .catch(err => console.error(' MongoDB connection error:', err));
 
 // API routes
 app.use('/api/auth', authRoutes);
@@ -45,8 +45,8 @@ app.use('/api/admin', adminRoutes);
 
 // Default route
 app.get('/', (req, res) => {
-  res.send('🚀 Startup Idea Validator API is running...');
+  res.send('Startup Idea Validator API is running...');
 });
 
 // Start server
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(` Server running on port ${PORT}`));

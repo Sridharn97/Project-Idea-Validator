@@ -23,7 +23,7 @@ export const getAllIdeas = async (req, res) => {
     }
 
     const ideas = await Idea.find(query)
-      .populate('user', 'username')
+      .populate('user', 'username email')
       .sort({ createdAt: -1 });
 
     res.json(ideas);
@@ -73,7 +73,7 @@ export const deleteIdea = async (req, res) => {
 
     // Also delete all associated comments
     await Comment.deleteMany({ idea: req.params.id });
-    
+
     await idea.deleteOne();
 
     res.json({ message: 'Idea and associated comments removed' });

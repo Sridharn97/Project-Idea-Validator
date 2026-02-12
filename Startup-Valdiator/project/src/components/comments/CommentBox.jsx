@@ -110,11 +110,8 @@ const CommentBox = ({ ideaId }) => {
         </form>
       ) : (
         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-xl mb-8 border border-blue-100">
-          <p className="text-blue-800 flex items-center gap-1">
-            <span>💬</span>
-            <span>
-              <a href="/login" className="font-semibold underline hover:text-blue-600 transition-colors">Sign in</a> to join the conversation
-            </span>
+          <p className="text-blue-800">
+            <a href="/login" className="font-semibold underline hover:text-blue-600 transition-colors">Sign in</a> to join the conversation
           </p>
         </div>
       )}
@@ -129,7 +126,6 @@ const CommentBox = ({ ideaId }) => {
       ) : comments.length === 0 ? (
         <div className="text-center py-10">
           <div className="text-gray-400 flex flex-col items-center">
-            <span className="text-4xl mb-2">💬</span>
             <p className="text-gray-500">No comments yet</p>
             <p className="text-sm text-gray-400">Start the discussion!</p>
           </div>
