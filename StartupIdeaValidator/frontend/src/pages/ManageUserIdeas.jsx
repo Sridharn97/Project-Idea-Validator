@@ -4,6 +4,7 @@ import { Filter, Eye, Check, X, AlertCircle, Trash2, Search, Loader2, Edit, User
 import axios from '../axiosConfig';
 import toast from 'react-hot-toast';
 import AuthContext from '../context/AuthContext';
+import './Admin.css';
 
 const ManageUserIdeas = () => {
   const { user, loading: authLoading } = useContext(AuthContext);
@@ -144,12 +145,12 @@ const ManageUserIdeas = () => {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  const getStatusColor = (status) => {
+  const getStatusBadgeClass = (status) => {
     switch (status) {
-      case 'Approved': return 'bg-green-50 text-green-700 border-green-200';
-      case 'Rejected': return 'bg-red-50 text-red-700 border-red-200';
-      case 'Pending': return 'bg-yellow-50 text-yellow-700 border-yellow-200';
-      default: return 'bg-gray-50 text-gray-700 border-gray-200';
+      case 'Approved': return 'badge badge-approved';
+      case 'Rejected': return 'badge badge-rejected';
+      case 'Pending': return 'badge badge-pending';
+      default: return 'badge badge-default';
     }
   };
 
@@ -161,150 +162,132 @@ const ManageUserIdeas = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="admin-page">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Manage User Ideas</h1>
-        <p className="text-gray-600">View, review, and manage all user-submitted ideas</p>
+      <div className="admin-header">
+        <h1 className="admin-title">Manage User Ideas</h1>
+        <p className="admin-subtitle">View, review, and manage all user-submitted ideas</p>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Total Ideas</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
-            </div>
-            <div className="bg-blue-100 rounded-full p-3">
-              <Tag className="h-6 w-6 text-blue-600" />
-            </div>
+      <div className="stats-grid">
+        <div className="stat-card">
+          <div>
+            <p className="stat-label">Total Ideas</p>
+            <p className="stat-value">{stats.total}</p>
+          </div>
+          <div className="stat-icon-wrapper total">
+            <Tag className="icon-md" />
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Pending</p>
-              <p className="text-2xl font-bold text-yellow-600">{stats.pending}</p>
-            </div>
-            <div className="bg-yellow-100 rounded-full p-3">
-              <AlertCircle className="h-6 w-6 text-yellow-600" />
-            </div>
+        <div className="stat-card">
+          <div>
+            <p className="stat-label">Pending</p>
+            <p className="stat-value pending">{stats.pending}</p>
+          </div>
+          <div className="stat-icon-wrapper pending">
+            <AlertCircle className="icon-md" />
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Approved</p>
-              <p className="text-2xl font-bold text-green-600">{stats.approved}</p>
-            </div>
-            <div className="bg-green-100 rounded-full p-3">
-              <Check className="h-6 w-6 text-green-600" />
-            </div>
+        <div className="stat-card">
+          <div>
+            <p className="stat-label">Approved</p>
+            <p className="stat-value approved">{stats.approved}</p>
+          </div>
+          <div className="stat-icon-wrapper approved">
+            <Check className="icon-md" />
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Rejected</p>
-              <p className="text-2xl font-bold text-red-600">{stats.rejected}</p>
-            </div>
-            <div className="bg-red-100 rounded-full p-3">
-              <X className="h-6 w-6 text-red-600" />
-            </div>
+        <div className="stat-card">
+          <div>
+            <p className="stat-label">Rejected</p>
+            <p className="stat-value rejected">{stats.rejected}</p>
+          </div>
+          <div className="stat-icon-wrapper rejected">
+            <X className="icon-md" />
           </div>
         </div>
       </div>
 
       {/* Filters and Search */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-        <div className="flex flex-col lg:flex-row gap-4">
-          {/* Search */}
-          <div className="flex-1">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                placeholder="Search ideas by title, description, user, category..."
-                className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-          </div>
+      <div className="filters-bar">
+        {/* Search */}
+        <div className="search-input-wrapper">
+          <Search className="search-icon icon-sm" />
+          <input
+            type="text"
+            placeholder="Search ideas by title, description, user, category..."
+            className="search-input"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
 
-          {/* Status Filter */}
-          <div className="flex items-center bg-gray-50 border border-gray-300 rounded-lg px-3">
-            <Filter className="h-5 w-5 text-gray-400 mr-2" />
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="py-2 pl-0 pr-8 border-0 bg-transparent font-medium text-gray-700 focus:ring-0 focus:outline-none appearance-none"
-            >
-              <option value="All">All Status</option>
-              <option value="Pending">Pending</option>
-              <option value="Approved">Approved</option>
-              <option value="Rejected">Rejected</option>
-            </select>
-          </div>
+        {/* Status Filter */}
+        <div className="filter-select-wrapper">
+          <Filter className="icon-sm" />
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="filter-select"
+          >
+            <option value="All">All Status</option>
+            <option value="Pending">Pending</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+        </div>
 
-          {/* Category Filter */}
-          <div className="flex items-center bg-gray-50 border border-gray-300 rounded-lg px-3">
-            <Tag className="h-5 w-5 text-gray-400 mr-2" />
-            <select
-              value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value)}
-              className="py-2 pl-0 pr-8 border-0 bg-transparent font-medium text-gray-700 focus:ring-0 focus:outline-none appearance-none"
-            >
-              {categories.map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
-          </div>
+        {/* Category Filter */}
+        <div className="filter-select-wrapper">
+          <Tag className="icon-sm" />
+          <select
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            className="filter-select"
+          >
+            {categories.map(cat => (
+              <option key={cat} value={cat}>{cat}</option>
+            ))}
+          </select>
+        </div>
 
-          {/* Sort */}
-          <div className="flex items-center bg-gray-50 border border-gray-300 rounded-lg px-3">
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="py-2 pl-0 pr-8 border-0 bg-transparent font-medium text-gray-700 focus:ring-0 focus:outline-none appearance-none"
-            >
-              <option value="newest">Newest First</option>
-              <option value="oldest">Oldest First</option>
-              <option value="title">Title (A-Z)</option>
-            </select>
-          </div>
+        {/* Sort */}
+        <div className="filter-select-wrapper">
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="filter-select"
+          >
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="title">Title (A-Z)</option>
+          </select>
         </div>
       </div>
 
       {/* Ideas Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-800">
-              {statusFilter === 'All' ? 'All Ideas' : `${statusFilter} Ideas`}
-              {filteredIdeas.length > 0 && (
-                <span className="ml-2 bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                  {filteredIdeas.length} {filteredIdeas.length === 1 ? 'item' : 'items'}
-                </span>
-              )}
-            </h2>
-          </div>
+      <div className="admin-table-container">
+        <div className="admin-table-header">
+          <h2 className="admin-table-title">
+            {statusFilter === 'All' ? 'All Ideas' : `${statusFilter} Ideas`}
+            {filteredIdeas.length > 0 && (
+              <span className="table-count-badge">
+                {filteredIdeas.length} {filteredIdeas.length === 1 ? 'item' : 'items'}
+              </span>
+            )}
+          </h2>
         </div>
 
         {loading ? (
-          <div className="flex justify-center items-center py-16">
-            <Loader2 className="h-8 w-8 text-blue-500 animate-spin" />
+          <div className="dashboard-loader">
+            <Loader2 className="dashboard-loader-icon spinner" />
           </div>
         ) : filteredIdeas.length === 0 ? (
-          <div className="p-12 text-center">
-            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-gray-100">
-              <AlertCircle className="h-6 w-6 text-gray-400" />
-            </div>
-            <h3 className="mt-3 text-lg font-medium text-gray-900">No ideas found</h3>
-            <p className="mt-1 text-gray-500 max-w-md mx-auto">
+          <div className="empty-state" style={{ border: 'none', boxShadow: 'none' }}>
+            <AlertCircle className="empty-state-icon-sm" />
+            <h3 className="empty-state-title-sm">No ideas found</h3>
+            <p className="empty-state-desc">
               {searchQuery || statusFilter !== 'All' || categoryFilter !== 'All'
                 ? 'Try adjusting your filters or search query.'
                 : 'There are no ideas submitted yet. Check back later.'}
@@ -316,120 +299,102 @@ const ManageUserIdeas = () => {
                   setStatusFilter('All');
                   setCategoryFilter('All');
                 }}
-                className="mt-4 text-sm text-blue-600 hover:text-blue-800 font-medium"
+                className="btn btn-text"
               >
                 Clear all filters
               </button>
             )}
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+          <div className="admin-table-responsive">
+            <table className="admin-table">
+              <thead>
                 <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Idea Details
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Category
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Submitted By
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Date
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
+                  <th>Idea Details</th>
+                  <th>Category</th>
+                  <th>Submitted By</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th style={{ textAlign: 'right' }}>Actions</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody>
                 {filteredIdeas.map(idea => (
-                  <tr key={idea._id} className="hover:bg-gray-50 transition-colors duration-150">
-                    <td className="px-6 py-4">
-                      <div className="flex items-start">
-                        <div className="flex-1">
-                          <div className="text-sm font-medium text-gray-900 mb-1">
-                            <Link to={`/ideas/${idea._id}`} className="hover:text-blue-600 hover:underline">
-                              {idea.title}
-                            </Link>
-                          </div>
-                          <div className="text-xs text-gray-500 line-clamp-2">
-                            {idea.description.substring(0, 120)}
-                            {idea.description.length > 120 && '...'}
-                          </div>
-                          {idea.techStack && idea.techStack.length > 0 && (
-                            <div className="mt-2 flex flex-wrap gap-1">
-                              {idea.techStack.slice(0, 3).map((tech, idx) => (
-                                <span key={idx} className="px-2 py-0.5 text-xs bg-purple-100 text-purple-700 rounded">
-                                  {tech}
-                                </span>
-                              ))}
-                              {idea.techStack.length > 3 && (
-                                <span className="px-2 py-0.5 text-xs bg-gray-100 text-gray-600 rounded">
-                                  +{idea.techStack.length - 3} more
-                                </span>
-                              )}
-                            </div>
-                          )}
+                  <tr key={idea._id}>
+                    <td>
+                      <div className="td-idea-details">
+                        <div className="td-idea-title">
+                          <Link to={`/ideas/${idea._id}`}>{idea.title}</Link>
                         </div>
+                        <div className="td-idea-desc">
+                          {idea.description}
+                        </div>
+                        {idea.techStack && idea.techStack.length > 0 && (
+                          <div className="td-tech-tags">
+                            {idea.techStack.slice(0, 3).map((tech, idx) => (
+                              <span key={idx} className="td-tech-tag">
+                                {tech}
+                              </span>
+                            ))}
+                            {idea.techStack.length > 3 && (
+                              <span className="td-tech-tag" style={{ background: '#f1f5f9', color: '#475569' }}>
+                                +{idea.techStack.length - 3} more
+                              </span>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="px-2.5 py-0.5 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
+                    <td>
+                      <span className="badge badge-default">
                         {idea.category}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
-                          <span className="text-sm font-medium text-gray-600">
-                            {idea.user?.username?.charAt(0).toUpperCase() || 'A'}
-                          </span>
+                    <td>
+                      <div className="td-user-info">
+                        <div className="td-user-avatar">
+                          {idea.user?.username?.charAt(0).toUpperCase() || 'A'}
                         </div>
-                        <div className="ml-3">
-                          <div className="text-sm font-medium text-gray-900">
+                        <div className="td-user-details">
+                          <div className="td-username">
                             {idea.user?.username || 'Anonymous'}
                           </div>
-                          <div className="text-xs text-gray-500">
+                          <div className="td-user-email">
                             {idea.user?.email || 'No email'}
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{formatDate(idea.createdAt)}</div>
+                    <td>
+                      <div className="td-date">{formatDate(idea.createdAt)}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border ${getStatusColor(idea.status)}`}>
+                    <td>
+                      <span className={getStatusBadgeClass(idea.status)}>
                         {idea.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <div className="flex justify-end space-x-2">
+                    <td>
+                      <div className="td-actions">
                         <Link
                           to={`/ideas/${idea._id}`}
-                          className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+                          className="icon-btn"
                           title="View Details"
                         >
-                          <Eye className="h-4 w-4" />
+                          <Eye className="icon-sm" />
                         </Link>
 
                         {idea.status !== 'Approved' && (
                           <button
                             onClick={() => handleStatusChange(idea._id, 'Approved')}
                             disabled={isProcessing}
-                            className="p-2 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded-full transition-colors"
+                            className="icon-btn"
+                            style={{ color: 'var(--success)' }}
                             title="Approve Idea"
                           >
                             {isProcessing ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
+                              <Loader2 className="icon-sm spinner" />
                             ) : (
-                              <Check className="h-4 w-4" />
+                              <Check className="icon-sm" />
                             )}
                           </button>
                         )}
@@ -438,13 +403,14 @@ const ManageUserIdeas = () => {
                           <button
                             onClick={() => handleStatusChange(idea._id, 'Rejected')}
                             disabled={isProcessing}
-                            className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
+                            className="icon-btn"
+                            style={{ color: 'var(--danger)' }}
                             title="Reject Idea"
                           >
                             {isProcessing ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
+                              <Loader2 className="icon-sm spinner" />
                             ) : (
-                              <X className="h-4 w-4" />
+                              <X className="icon-sm" />
                             )}
                           </button>
                         )}
@@ -453,13 +419,14 @@ const ManageUserIdeas = () => {
                           <button
                             onClick={() => handleStatusChange(idea._id, 'Pending')}
                             disabled={isProcessing}
-                            className="p-2 text-gray-500 hover:text-yellow-600 hover:bg-yellow-50 rounded-full transition-colors"
+                            className="icon-btn"
+                            style={{ color: 'var(--warning)' }}
                             title="Set to Pending"
                           >
                             {isProcessing ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
+                              <Loader2 className="icon-sm spinner" />
                             ) : (
-                              <AlertCircle className="h-4 w-4" />
+                              <AlertCircle className="icon-sm" />
                             )}
                           </button>
                         )}
@@ -467,13 +434,13 @@ const ManageUserIdeas = () => {
                         <button
                           onClick={() => handleDeleteIdea(idea._id)}
                           disabled={isProcessing}
-                          className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
+                          className="icon-btn delete"
                           title="Delete Idea"
                         >
                           {isProcessing ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
+                            <Loader2 className="icon-sm spinner" />
                           ) : (
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="icon-sm" />
                           )}
                         </button>
                       </div>
@@ -488,12 +455,12 @@ const ManageUserIdeas = () => {
 
       {/* Results Info */}
       {filteredIdeas.length > 0 && (
-        <div className="mt-4 flex justify-between items-center text-sm text-gray-500">
+        <div className="admin-results-info">
           <div>
-            Showing <span className="font-medium">1</span> to <span className="font-medium">{filteredIdeas.length}</span> of{' '}
-            <span className="font-medium">{filteredIdeas.length}</span> results
+            Showing <span style={{ fontWeight: 500 }}>1</span> to <span style={{ fontWeight: 500 }}>{filteredIdeas.length}</span> of{' '}
+            <span style={{ fontWeight: 500 }}>{filteredIdeas.length}</span> results
             {searchQuery && ideas.length !== filteredIdeas.length && (
-              <span className="ml-2 text-gray-400">
+              <span style={{ marginLeft: '0.5rem', opacity: 0.7 }}>
                 (filtered from {ideas.length} total)
               </span>
             )}

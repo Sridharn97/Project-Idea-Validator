@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import AuthContext from '../context/AuthContext';
 import toast from 'react-hot-toast';
+import './Auth.css';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -102,18 +103,18 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 p-4">
-      <div className="w-full max-w-md">
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 py-8 px-8 text-center">
-            <h2 className="text-3xl font-bold text-white mb-2">Welcome Back</h2>
-            <p className="text-blue-100 opacity-90">Sign in to continue to your account</p>
+    <div className="auth-page">
+      <div className="auth-card-container">
+        <div className="auth-card">
+          <div className="auth-header">
+            <h2 className="auth-title">Welcome Back</h2>
+            <p className="auth-subtitle">Sign in to continue to your account</p>
           </div>
           
-          <form onSubmit={handleSubmit} className="p-8 space-y-6">
-            <div className="space-y-4">
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+          <form onSubmit={handleSubmit} className="auth-form">
+            <div className="auth-field-row">
+              <div className="form-group">
+                <label htmlFor="email" className="form-label">
                   Email Address
                 </label>
                 <input
@@ -122,55 +123,51 @@ const Login = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className={`w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 ${
-                    errors.email ? 'border-red-500' : 'border-gray-300 hover:border-gray-400'
-                  }`}
+                  className={`auth-input ${errors.email ? 'has-error' : ''}`}
                   placeholder="your@email.com"
                 />
                 {errors.email && errors.email !== ' ' && (
-                  <p className="mt-1 text-sm text-red-600 animate-fadeIn">{errors.email}</p>
+                  <p className="form-error animate-fade-in">{errors.email}</p>
                 )}
               </div>
               
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <div className="form-group">
+                <div className="auth-label-row">
+                  <label htmlFor="password" className="form-label mb-0">
                     Password
                   </label>
                   <Link 
                     to="/forgot-password" 
-                    className="text-xs text-blue-600 hover:underline font-medium"
+                    className="auth-link"
                   >
                     Forgot password?
                   </Link>
                 </div>
-                <div className="relative">
+                <div className="auth-input-wrapper">
                   <input
                     type={showPassword ? 'text' : 'password'}
                     id="password"
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
-                    className={`w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 ${
-                      errors.password ? 'border-red-500' : 'border-gray-300 hover:border-gray-400'
-                    }`}
+                    className={`auth-input ${errors.password ? 'has-error' : ''}`}
                     placeholder="••••••••"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700 transition-colors duration-200"
+                    className="password-toggle"
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
                     {showPassword ? (
-                      <EyeOff className="h-5 w-5" />
+                      <EyeOff className="icon-sm" />
                     ) : (
-                      <Eye className="h-5 w-5" />
+                      <Eye className="icon-sm" />
                     )}
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="mt-1 text-sm text-red-600 animate-fadeIn">{errors.password}</p>
+                  <p className="form-error animate-fade-in">{errors.password}</p>
                 )}
               </div>
             </div>
@@ -178,15 +175,11 @@ const Login = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full py-3 px-4 rounded-lg font-medium transition duration-200 shadow-sm flex items-center justify-center ${
-                isLoading 
-                  ? 'bg-blue-400 cursor-not-allowed' 
-                  : 'bg-blue-600 hover:bg-blue-700 transform hover:-translate-y-0.5'
-              } text-white`}
+              className="auth-submit-btn"
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                  <Loader2 className="icon-md spinner" style={{ marginRight: '0.5rem' }} />
                   Signing In...
                 </>
               ) : (
@@ -194,11 +187,11 @@ const Login = () => {
               )}
             </button>
             
-            <div className="text-center text-sm text-gray-600 pt-4 border-t border-gray-100">
+            <div className="auth-footer-text">
               New to our platform?{' '}
               <Link 
                 to="/register" 
-                className="text-blue-600 hover:underline font-medium transition duration-200"
+                className="auth-footer-link"
               >
                 Create an account
               </Link>
@@ -206,13 +199,13 @@ const Login = () => {
           </form>
         </div>
         
-        <div className="mt-6 text-center text-xs text-gray-500">
+        <div className="auth-legal-text">
           By continuing, you agree to our{' '}
-          <Link to="/terms" className="text-blue-600 hover:underline">
+          <Link to="/terms" className="auth-legal-link">
             Terms of Service
           </Link>{' '}
           and{' '}
-          <Link to="/privacy" className="text-blue-600 hover:underline">
+          <Link to="/privacy" className="auth-legal-link">
             Privacy Policy
           </Link>
         </div>

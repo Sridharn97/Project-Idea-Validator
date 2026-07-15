@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, Lightbulb, LogOut, User } from 'lucide-react';
 import AuthContext from '../../context/AuthContext';
+import './Navbar.css';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -14,23 +15,23 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-blue-600 text-white shadow-md">
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center h-16">
+    <nav className="navbar">
+      <div className="navbar-container">
+        <div className="navbar-inner">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <Lightbulb className="h-6 w-6 text-yellow-300 group-hover:rotate-12 transition-transform duration-300" />
-            <span className="font-bold text-xl bg-gradient-to-r from-yellow-300 to-white bg-clip-text text-transparent">
+          <Link to="/" className="navbar-logo">
+            <Lightbulb className="logo-icon" />
+            <span className="logo-text">
               ProjectInsight
             </span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="navbar-desktop">
             {isAdmin && (
               <Link
                 to="/manage-ideas"
-                className="block px-3 py-2 hover:bg-blue-700 rounded-md"
+                className="nav-link"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Manage Ideas
@@ -43,7 +44,7 @@ const Navbar = () => {
                 {!isAdmin && (
                   <Link
                     to="/dashboard"
-                    className="block px-3 py-2 hover:bg-blue-700 rounded-md"
+                    className="nav-link"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Dashboard
@@ -52,37 +53,28 @@ const Navbar = () => {
 
 
                 {isAdmin && (
-                  <Link to="/admin" className="hover:text-blue-200 transition duration-300">
+                  <Link to="/admin" className="nav-link">
                     Admin Panel
                   </Link>
                 )}
 
-                <div className="flex items-center ml-4 space-x-4">
-                  <span className="text-blue-100">
+                <div className="navbar-user-menu">
+                  <span className="user-greeting">
                     Welcome, {user?.username}
                   </span>
-                  <button
-                    onClick={handleLogout}
-                    className="flex items-center space-x-1 bg-blue-700 hover:bg-blue-800 px-3 py-1 rounded-md transition duration-300"
-                  >
-                    <LogOut className="h-4 w-4" />
+                  <button onClick={handleLogout} className="btn btn-primary btn-logout">
+                    <LogOut className="icon-sm" />
                     <span>Logout</span>
                   </button>
                 </div>
               </>
             ) : (
-              <div className="flex items-center space-x-4">
-                <Link
-                  to="/login"
-                  className="flex items-center space-x-1 hover:text-blue-200 transition duration-300"
-                >
-                  <User className="h-4 w-4" />
+              <div className="navbar-auth">
+                <Link to="/login" className="nav-link nav-login">
+                  <User className="icon-sm" />
                   <span>Login</span>
                 </Link>
-                <Link
-                  to="/register"
-                  className="bg-white text-blue-600 hover:bg-blue-100 px-3 py-1 rounded-md transition duration-300"
-                >
+                <Link to="/register" className="btn btn-secondary">
                   Register
                 </Link>
               </div>
@@ -90,23 +82,20 @@ const Navbar = () => {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden">
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-white focus:outline-none"
-            >
-              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          <div className="navbar-mobile-btn">
+            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="menu-btn">
+              {isMenuOpen ? <X className="icon-md" /> : <Menu className="icon-md" />}
             </button>
           </div>
         </div>
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden pb-4 space-y-3">
+          <div className="navbar-mobile-menu">
             {isAdmin && (
               <Link
                 to="/manage-ideas"
-                className="block px-3 py-2 hover:bg-blue-700 rounded-md"
+                className="mobile-nav-link"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Manage Ideas
@@ -117,7 +106,7 @@ const Navbar = () => {
               <>
                 <Link
                   to="/dashboard"
-                  className="block px-3 py-2 hover:bg-blue-700 rounded-md"
+                  className="mobile-nav-link"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Dashboard
@@ -126,14 +115,14 @@ const Navbar = () => {
                 {isAdmin && (
                   <Link
                     to="/admin"
-                    className="block px-3 py-2 hover:bg-blue-700 rounded-md"
+                    className="mobile-nav-link"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Admin Panel
                   </Link>
                 )}
 
-                <div className="px-3 py-2 text-blue-100">
+                <div className="mobile-user-greeting">
                   Welcome, {user?.username}
                 </div>
 
@@ -142,9 +131,9 @@ const Navbar = () => {
                     handleLogout();
                     setIsMenuOpen(false);
                   }}
-                  className="flex items-center space-x-1 w-full text-left px-3 py-2 hover:bg-blue-700 rounded-md"
+                  className="mobile-nav-link mobile-logout"
                 >
-                  <LogOut className="h-4 w-4" />
+                  <LogOut className="icon-sm" />
                   <span>Logout</span>
                 </button>
               </>
@@ -152,14 +141,14 @@ const Navbar = () => {
               <>
                 <Link
                   to="/login"
-                  className="block px-3 py-2 hover:bg-blue-700 rounded-md"
+                  className="mobile-nav-link"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Login
                 </Link>
                 <Link
                   to="/register"
-                  className="block px-3 py-2 bg-white text-blue-600 hover:bg-blue-100 rounded-md"
+                  className="mobile-nav-link mobile-register"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Register

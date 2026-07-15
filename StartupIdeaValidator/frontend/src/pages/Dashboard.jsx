@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import IdeaForm from '../components/ideas/IdeaForm';
 import IdeaCard from '../components/ideas/IdeaCard';
 import AuthContext from '../context/AuthContext';
+import './Dashboard.css';
 
 const Dashboard = () => {
   const { id } = useParams();
@@ -140,11 +141,11 @@ const Dashboard = () => {
   const getStatusIcon = (status) => {
     switch (status) {
       case 'Approved':
-        return <CheckCircle className="h-4 w-4 text-green-500" />;
+        return <CheckCircle className="icon-sm" />;
       case 'Rejected':
-        return <XCircle className="h-4 w-4 text-red-500" />;
+        return <XCircle className="icon-sm" />;
       default:
-        return <Clock className="h-4 w-4 text-yellow-500" />;
+        return <Clock className="icon-sm" />;
     }
   };
 
@@ -154,10 +155,10 @@ const Dashboard = () => {
   });
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+    <div className="dashboard-page">
+      <div className="dashboard-header">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="dashboard-title">
             {showForm ? (
               editing ? 'Edit Your Idea' : 'Share Your New Idea'
             ) : (
@@ -165,25 +166,22 @@ const Dashboard = () => {
             )}
           </h1>
           {!showForm && (
-            <p className="text-gray-600 mt-1">
+            <p className="dashboard-subtitle">
               {filteredIdeas.length} {filteredIdeas.length === 1 ? 'idea' : 'ideas'} found
             </p>
           )}
         </div>
         
         {!showForm && (
-          <button
-            onClick={handleNewIdea}
-            className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white px-5 py-2.5 rounded-lg hover:from-blue-700 hover:to-blue-600 transition-all shadow-md hover:shadow-lg"
-          >
-            <PlusCircle className="h-5 w-5" />
+          <button onClick={handleNewIdea} className="btn btn-primary">
+            <PlusCircle className="icon-sm" />
             <span>New Idea</span>
           </button>
         )}
       </div>
 
       {showForm ? (
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <div className="form-wrapper">
           <IdeaForm 
             idea={currentIdea} 
             onSuccess={handleFormSuccess} 
@@ -193,97 +191,89 @@ const Dashboard = () => {
       ) : (
         <div>
           {loading ? (
-            <div className="flex flex-col items-center justify-center py-16">
-              <Loader className="animate-spin h-12 w-12 text-blue-500 mb-4" />
-              <p className="text-gray-600">Loading your ideas...</p>
+            <div className="dashboard-loader">
+              <Loader className="dashboard-loader-icon spinner" />
+              <p>Loading your ideas...</p>
             </div>
           ) : ideas.length === 0 ? (
-            <div className="bg-white rounded-xl shadow-sm p-8 text-center border border-gray-100">
-              <div className="bg-blue-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Lightbulb className="h-10 w-10 text-blue-500" />
+            <div className="empty-state">
+              <div className="empty-state-icon-wrapper">
+                <Lightbulb className="empty-state-icon" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">No Ideas Yet</h2>
-              <p className="text-gray-600 mb-6 max-w-md mx-auto">
+              <h2 className="empty-state-title">No Ideas Yet</h2>
+              <p className="empty-state-desc">
                 Your brilliant ideas deserve to be shared! Submit your first startup idea and get feedback.
               </p>
-              <button
-                onClick={handleNewIdea}
-                className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white px-6 py-3 rounded-lg hover:from-blue-700 hover:to-blue-600 transition-all shadow-md hover:shadow-lg"
-              >
-                <PlusCircle className="h-5 w-5" />
+              <button onClick={handleNewIdea} className="btn btn-primary">
+                <PlusCircle className="icon-sm" />
                 <span>Submit Your First Idea</span>
               </button>
             </div>
           ) : (
-            <div className="space-y-6">
-              <div className="flex flex-wrap gap-2 border-b border-gray-200 pb-4">
+            <div>
+              <div className="tabs-container">
                 <button
                   onClick={() => setActiveTab('all')}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'all' ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-gray-100'}`}
+                  className={`tab-btn ${activeTab === 'all' ? 'active-all' : ''}`}
                 >
                   All Ideas
                 </button>
                 <button
                   onClick={() => setActiveTab('Pending')}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-1 ${activeTab === 'Pending' ? 'bg-yellow-100 text-yellow-700' : 'text-gray-600 hover:bg-gray-100'}`}
+                  className={`tab-btn ${activeTab === 'Pending' ? 'active-pending' : ''}`}
                 >
-                  <Clock className="h-4 w-4" />
+                  <Clock className="icon-sm" />
                   Pending
                 </button>
                 <button
                   onClick={() => setActiveTab('Approved')}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-1 ${activeTab === 'Approved' ? 'bg-green-100 text-green-700' : 'text-gray-600 hover:bg-gray-100'}`}
+                  className={`tab-btn ${activeTab === 'Approved' ? 'active-approved' : ''}`}
                 >
-                  <CheckCircle className="h-4 w-4" />
+                  <CheckCircle className="icon-sm" />
                   Approved
                 </button>
                 <button
                   onClick={() => setActiveTab('Rejected')}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-1 ${activeTab === 'Rejected' ? 'bg-red-100 text-red-700' : 'text-gray-600 hover:bg-gray-100'}`}
+                  className={`tab-btn ${activeTab === 'Rejected' ? 'active-rejected' : ''}`}
                 >
-                  <XCircle className="h-4 w-4" />
+                  <XCircle className="icon-sm" />
                   Rejected
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="dashboard-grid">
                 {filteredIdeas.map(idea => (
-                  <div 
-                    key={idea._id} 
-                    className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition border border-gray-100"
-                  >
+                  <div key={idea._id} className="dashboard-card-wrapper">
                     <IdeaCard 
                       idea={idea} 
                       showActions={false}
                     />
-                    <div className="px-5 py-3 bg-gray-50 border-t border-gray-100 flex justify-between items-center">
-                      <div className="flex items-center gap-2 text-sm font-medium">
+                    <div className="dashboard-card-footer">
+                      <div className={`status-indicator ${idea.status.toLowerCase()}`}>
                         {getStatusIcon(idea.status)}
-                        <span className={`${idea.status === 'Approved' ? 'text-green-700' : idea.status === 'Rejected' ? 'text-red-700' : 'text-yellow-700'}`}>
-                          {idea.status}
-                        </span>
+                        <span>{idea.status}</span>
                       </div>
-                      <div className="flex gap-3">
+                      <div className="dashboard-card-actions">
                         <button
                           onClick={() => handleEditIdea(idea)}
-                          className="text-gray-500 hover:text-blue-600 transition p-1.5 rounded-full hover:bg-blue-50"
+                          className="icon-btn edit"
                           title="Edit idea"
                         >
-                          <Edit2 className="h-4 w-4" />
+                          <Edit2 className="icon-sm" />
                         </button>
                         <button
                           onClick={() => handleDeleteIdea(idea._id)}
-                          className="text-gray-500 hover:text-red-600 transition p-1.5 rounded-full hover:bg-red-50"
+                          className="icon-btn delete"
                           title="Delete idea"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="icon-sm" />
                         </button>
                         <button
                           onClick={() => navigate(`/ideas/${idea._id}`)}
-                          className="text-gray-500 hover:text-gray-700 transition p-1.5 rounded-full hover:bg-gray-100"
+                          className="icon-btn"
                           title="View details"
                         >
-                          <ChevronRight className="h-4 w-4" />
+                          <ChevronRight className="icon-sm" />
                         </button>
                       </div>
                     </div>
@@ -292,12 +282,12 @@ const Dashboard = () => {
               </div>
 
               {filteredIdeas.length === 0 && (
-                <div className="bg-white rounded-xl shadow-sm p-8 text-center border border-gray-100">
-                  <Lightbulb className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-800 mb-2">
+                <div className="empty-state" style={{ marginTop: '2rem' }}>
+                  <Lightbulb className="empty-state-icon-sm" />
+                  <h3 className="empty-state-title-sm">
                     No {activeTab === 'all' ? '' : activeTab.toLowerCase() + ' '}ideas found
                   </h3>
-                  <p className="text-gray-600 mb-4">
+                  <p className="empty-state-desc">
                     {activeTab === 'all' 
                       ? 'You have no ideas yet' 
                       : `You have no ${activeTab.toLowerCase()} ideas`}
@@ -305,7 +295,7 @@ const Dashboard = () => {
                   {activeTab !== 'all' && (
                     <button
                       onClick={() => setActiveTab('all')}
-                      className="text-blue-600 hover:text-blue-800 font-medium text-sm"
+                      className="btn btn-text"
                     >
                       View all ideas
                     </button>

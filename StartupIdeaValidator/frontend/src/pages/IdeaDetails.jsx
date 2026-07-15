@@ -5,6 +5,7 @@ import axios from '../axiosConfig';
 import toast from 'react-hot-toast';
 import CommentBox from '../components/comments/CommentBox';
 import AuthContext from '../context/AuthContext';
+import './IdeaDetails.css';
 
 const IdeaDetails = () => {
   const { id } = useParams();
@@ -89,21 +90,21 @@ const IdeaDetails = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-20">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="dashboard-loader" style={{ padding: '5rem 0' }}>
+        <div className="spinner" style={{ width: '3rem', height: '3rem', borderTopColor: 'var(--primary)', borderRightColor: 'var(--primary)', borderBottomColor: 'var(--primary)' }}></div>
       </div>
     );
   }
 
   if (!idea) {
     return (
-      <div className="text-center py-16">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Idea Not Found</h2>
-        <p className="text-gray-600 mb-4">
+      <div className="empty-state" style={{ marginTop: '3rem' }}>
+        <h2 className="empty-state-title">Idea Not Found</h2>
+        <p className="empty-state-desc">
           The idea you're looking for doesn't exist or has been removed.
         </p>
-        <Link to="/" className="text-blue-600 hover:underline flex items-center justify-center">
-          <ArrowLeft className="mr-2 h-4 w-4" />
+        <Link to="/" className="back-link" style={{ justifyContent: 'center' }}>
+          <ArrowLeft className="icon-sm" />
           Back to Home
         </Link>
       </div>
@@ -117,68 +118,54 @@ const IdeaDetails = () => {
   };
 
   // Status color
-  const getStatusColor = (status) => {
+  const getStatusBadgeClass = (status) => {
     switch (status) {
-      case 'Approved':
-        return 'bg-green-100 text-green-800 border-green-200';
-      case 'Rejected':
-        return 'bg-red-100 text-red-800 border-red-200';
-      default:
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'Approved': return 'badge badge-approved';
+      case 'Rejected': return 'badge badge-rejected';
+      case 'Pending': return 'badge badge-pending';
+      default: return 'badge badge-default';
     }
   };
 
   return (
-    <div>
-      <div className="mb-6">
-        <Link to="/" className="text-blue-600 hover:underline flex items-center">
-          <ArrowLeft className="mr-2 h-4 w-4" />
+    <div className="idea-details-page">
+      <div>
+        <Link to="/" className="back-link">
+          <ArrowLeft className="icon-sm" />
           Back to ideas
         </Link>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <div className="p-6">
-          <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-6">
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">{idea.title}</h1>
+      <div className="idea-details-card">
+        <div className="idea-details-header">
+          <div className="idea-title-row">
+            <h1 className="idea-title">{idea.title}</h1>
             
-            <div className="flex items-center space-x-2">
-              <span className={`text-sm font-semibold px-3 py-1 rounded-full border ${getStatusColor(idea.status)}`}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span className={getStatusBadgeClass(idea.status)}>
                 {idea.status}
               </span>
               
               {isAdmin && (
-                <div className="flex space-x-1">
+                <div className="admin-action-btns">
                   <button
                     onClick={() => handleStatusChange('Approved')}
                     disabled={idea.status === 'Approved'}
-                    className={`px-2 py-1 text-xs font-medium rounded ${
-                      idea.status === 'Approved'
-                        ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
-                        : 'bg-green-600 text-white hover:bg-green-700'
-                    }`}
+                    className="admin-btn admin-btn-approve"
                   >
                     Approve
                   </button>
                   <button
                     onClick={() => handleStatusChange('Rejected')}
                     disabled={idea.status === 'Rejected'}
-                    className={`px-2 py-1 text-xs font-medium rounded ${
-                      idea.status === 'Rejected'
-                        ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
-                        : 'bg-red-600 text-white hover:bg-red-700'
-                    }`}
+                    className="admin-btn admin-btn-reject"
                   >
                     Reject
                   </button>
                   <button
                     onClick={() => handleStatusChange('Pending')}
                     disabled={idea.status === 'Pending'}
-                    className={`px-2 py-1 text-xs font-medium rounded ${
-                      idea.status === 'Pending'
-                        ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
-                        : 'bg-yellow-600 text-white hover:bg-yellow-700'
-                    }`}
+                    className="admin-btn admin-btn-pending"
                   >
                     Pending
                   </button>
@@ -187,97 +174,97 @@ const IdeaDetails = () => {
             </div>
           </div>
 
-          <div className="mb-6">
-            <div className="flex items-center text-sm text-gray-500 mb-4">
-              <span>By {idea.user?.username || 'Anonymous'}</span>
-              <span className="mx-2">•</span>
-              <span>Posted on {formatDate(idea.createdAt)}</span>
-              {idea.createdAt !== idea.updatedAt && (
-                <>
-                  <span className="mx-2">•</span>
-                  <span>Updated on {formatDate(idea.updatedAt)}</span>
-                </>
-              )}
-            </div>
-
-            {idea.status === 'Rejected' && (
-              <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-4 flex items-start">
-                <AlertCircle className="text-red-500 h-5 w-5 mr-2 mt-0.5" />
-                <div>
-                  <p className="text-red-800 font-medium">This idea was rejected</p>
-                  <p className="text-red-700 text-sm">
-                    The idea does not meet our community guidelines or has been deemed unfeasible.
-                  </p>
-                </div>
-              </div>
+          <div className="idea-meta-row">
+            <span>By <span style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{idea.user?.username || 'Anonymous'}</span></span>
+            <span className="meta-separator">•</span>
+            <span>Posted on {formatDate(idea.createdAt)}</span>
+            {idea.createdAt !== idea.updatedAt && (
+              <>
+                <span className="meta-separator">•</span>
+                <span>Updated on {formatDate(idea.updatedAt)}</span>
+              </>
             )}
+          </div>
+        </div>
 
-            <div className="prose max-w-none">
-              <p className="whitespace-pre-line text-gray-700">{idea.description}</p>
-            </div>
-
-            <div className="mt-6">
-              <h3 className="text-lg font-semibold mb-2">Category:</h3>
-              <span className="bg-blue-100 text-blue-800 text-sm font-semibold px-3 py-1 rounded-full">
-                {idea.category}
-              </span>
-            </div>
-
-            <div className="mt-4">
-              <h3 className="text-lg font-semibold mb-2">Tech Stack:</h3>
-              <div className="flex flex-wrap gap-2">
-                {idea.techStack && idea.techStack.map((tech, index) => (
-                  <span key={index} className="bg-purple-100 text-purple-800 text-sm font-semibold px-3 py-1 rounded-full">
-                    {tech}
-                  </span>
-                ))}
+        <div style={{ padding: '2rem' }}>
+          {idea.status === 'Rejected' && (
+            <div className="rejection-banner">
+              <AlertCircle className="rejection-icon icon-md" />
+              <div>
+                <p className="rejection-title">This idea was rejected</p>
+                <p className="rejection-desc">
+                  The idea does not meet our community guidelines or has been deemed unfeasible.
+                </p>
               </div>
             </div>
+          )}
+
+          <div className="idea-description-content">
+            {idea.description}
           </div>
 
-          <div className="flex flex-wrap items-center justify-between py-4 border-t border-gray-100">
-            <div className="flex space-x-6">
-              <button
-                onClick={() => handleVote('up')}
-                disabled={voteLoading}
-                className={`flex items-center space-x-2 text-gray-700 hover:text-green-600 transition ${voteLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-              >
-                <ThumbsUp className="h-5 w-5" />
-                <span className="font-medium">{idea.votes?.up || 0}</span>
-                <span className="sr-only md:not-sr-only md:inline text-sm">Upvotes</span>
-              </button>
-              <button
-                onClick={() => handleVote('down')}
-                disabled={voteLoading}
-                className={`flex items-center space-x-2 text-gray-700 hover:text-red-600 transition ${voteLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-              >
-                <ThumbsDown className="h-5 w-5" />
-                <span className="font-medium">{idea.votes?.down || 0}</span>
-                <span className="sr-only md:not-sr-only md:inline text-sm">Downvotes</span>
-              </button>
+          <div className="idea-details-section">
+            <h3 className="section-title">Category:</h3>
+            <span className="badge badge-default">
+              {idea.category}
+            </span>
+          </div>
+
+          <div className="idea-details-section">
+            <h3 className="section-title">Tech Stack:</h3>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+              {idea.techStack && idea.techStack.map((tech, index) => (
+                <span key={index} className="badge" style={{ background: '#faf5ff', color: '#7e22ce', border: '1px solid #f3e8ff' }}>
+                  {tech}
+                </span>
+              ))}
             </div>
-            
-            {isAuthenticated && (user?._id === idea.user?._id || isAdmin) && (
-              <div className="flex space-x-2 mt-4 sm:mt-0">
-                {user?._id === idea.user?._id && (
-                  <Link
-                    to={`/dashboard/edit/${idea._id}`}
-                    className="flex items-center space-x-1 px-3 py-1 bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition"
-                  >
-                    <Edit className="h-4 w-4" />
-                    <span>Edit</span>
-                  </Link>
-                )}
-                <button
-                  onClick={handleDelete}
-                  className="flex items-center space-x-1 px-3 py-1 bg-red-50 text-red-600 rounded-md hover:bg-red-100 transition"
+          </div>
+        </div>
+
+        <div className="idea-details-footer">
+          <div className="vote-actions">
+            <button
+              onClick={() => handleVote('up')}
+              disabled={voteLoading}
+              className="vote-btn upvote"
+            >
+              <ThumbsUp className="icon-md" />
+              <span style={{ fontSize: '1.125rem' }}>{idea.votes?.up || 0}</span>
+              <span className="vote-label">Upvotes</span>
+            </button>
+            <button
+              onClick={() => handleVote('down')}
+              disabled={voteLoading}
+              className="vote-btn downvote"
+            >
+              <ThumbsDown className="icon-md" />
+              <span style={{ fontSize: '1.125rem' }}>{idea.votes?.down || 0}</span>
+              <span className="vote-label">Downvotes</span>
+            </button>
+          </div>
+          
+          {isAuthenticated && (user?._id === idea.user?._id || isAdmin) && (
+            <div className="owner-actions">
+              {user?._id === idea.user?._id && (
+                <Link
+                  to={`/dashboard/edit/${idea._id}`}
+                  className="owner-btn owner-btn-edit"
                 >
-                  <Trash className="h-4 w-4" />
-                  <span>Delete</span>
-                </button>
-              </div>
-            )}
-          </div>
+                  <Edit className="icon-sm" />
+                  <span>Edit</span>
+                </Link>
+              )}
+              <button
+                onClick={handleDelete}
+                className="owner-btn owner-btn-delete"
+              >
+                <Trash className="icon-sm" />
+                <span>Delete</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

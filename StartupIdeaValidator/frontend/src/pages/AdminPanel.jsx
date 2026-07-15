@@ -4,6 +4,7 @@ import { Filter, Eye, Check, X, AlertCircle, Trash2, Search, Loader2 } from 'luc
 import axios from '../axiosConfig';
 import toast from 'react-hot-toast';
 import { AuthContext } from '../context/AuthContext';
+import './Admin.css';
 
 const AdminPanel = () => {
   const { user, loading: authLoading } = useContext(AuthContext);
@@ -96,42 +97,41 @@ const AdminPanel = () => {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  const getStatusColor = (status) => {
+  const getStatusBadgeClass = (status) => {
     switch (status) {
-      case 'Approved': return 'bg-green-50 text-green-700 border-green-200';
-      case 'Rejected': return 'bg-red-50 text-red-700 border-red-200';
-      case 'Pending': return 'bg-yellow-50 text-yellow-700 border-yellow-200';
-      default: return 'bg-gray-50 text-gray-700 border-gray-200';
+      case 'Approved': return 'badge badge-approved';
+      case 'Rejected': return 'badge badge-rejected';
+      case 'Pending': return 'badge badge-pending';
+      default: return 'badge badge-default';
     }
   };
+
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+    <div className="admin-page">
+      <div className="admin-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap' }}>
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-          <p className="text-gray-600 mt-1">Manage and review submitted ideas</p>
+          <h1 className="admin-title">Admin Dashboard</h1>
+          <p className="admin-subtitle">Manage and review submitted ideas</p>
         </div>
         
-        <div className="mt-4 md:mt-0 flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-gray-400" />
-            </div>
+        <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
+          <div className="search-input-wrapper">
+            <Search className="search-icon icon-sm" />
             <input
               type="text"
               placeholder="Search ideas..."
-              className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full"
+              className="search-input"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
           
-          <div className="flex items-center bg-white border border-gray-300 rounded-lg px-3">
-            <Filter className="h-5 w-5 text-gray-400 mr-2" />
+          <div className="filter-select-wrapper">
+            <Filter className="icon-sm" />
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="py-2 pl-0 pr-8 border-0 bg-transparent font-medium text-gray-700 focus:ring-0 focus:outline-none appearance-none"
+              className="filter-select"
             >
               <option value="All">All Ideas</option>
               <option value="Pending">Pending</option>
@@ -142,31 +142,27 @@ const AdminPanel = () => {
         </div>
       </div>
       
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-800">
-              {statusFilter === 'All' ? 'All Ideas' : `${statusFilter} Ideas`}
-              {ideas.length > 0 && (
-                <span className="ml-2 bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                  {ideas.length} {ideas.length === 1 ? 'item' : 'items'}
-                </span>
-              )}
-            </h2>
-          </div>
+      <div className="admin-table-container">
+        <div className="admin-table-header">
+          <h2 className="admin-table-title">
+            {statusFilter === 'All' ? 'All Ideas' : `${statusFilter} Ideas`}
+            {ideas.length > 0 && (
+              <span className="table-count-badge">
+                {ideas.length} {ideas.length === 1 ? 'item' : 'items'}
+              </span>
+            )}
+          </h2>
         </div>
         
         {loading ? (
-          <div className="flex justify-center items-center py-16">
-            <Loader2 className="h-8 w-8 text-blue-500 animate-spin" />
+          <div className="dashboard-loader">
+            <Loader2 className="dashboard-loader-icon spinner" />
           </div>
         ) : ideas.length === 0 ? (
-          <div className="p-12 text-center">
-            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-gray-100">
-              <AlertCircle className="h-6 w-6 text-gray-400" />
-            </div>
-            <h3 className="mt-3 text-lg font-medium text-gray-900">No ideas found</h3>
-            <p className="mt-1 text-gray-500 max-w-md mx-auto">
+          <div className="empty-state" style={{ border: 'none', boxShadow: 'none' }}>
+            <AlertCircle className="empty-state-icon-sm" />
+            <h3 className="empty-state-title-sm">No ideas found</h3>
+            <p className="empty-state-desc">
               {statusFilter === 'All' 
                 ? 'There are no ideas submitted yet. Check back later.' 
                 : `No ${statusFilter.toLowerCase()} ideas found. Try changing the filter.`}
@@ -174,105 +170,88 @@ const AdminPanel = () => {
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="mt-4 text-sm text-blue-600 hover:text-blue-800 font-medium"
+                className="btn btn-text"
               >
                 Clear search
               </button>
             )}
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+          <div className="admin-table-responsive">
+            <table className="admin-table">
+              <thead>
                 <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Idea Title
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Category
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Submitted By
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Date
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
+                  <th>Idea Title</th>
+                  <th>Category</th>
+                  <th>Submitted By</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th style={{ textAlign: 'right' }}>Actions</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody>
                 {ideas.map(idea => (
-                  <tr key={idea._id} className="hover:bg-gray-50 transition-colors duration-150">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">
-                            <Link to={`/ideas/${idea._id}`} className="hover:text-blue-600 hover:underline">
-                              {idea.title}
-                            </Link>
-                          </div>
-                          <div className="text-xs text-gray-500 mt-1 line-clamp-2">
-                            {idea.description.substring(0, 80)}...
-                          </div>
+                  <tr key={idea._id}>
+                    <td>
+                      <div className="td-idea-details">
+                        <div className="td-idea-title">
+                          <Link to={`/ideas/${idea._id}`}>{idea.title}</Link>
+                        </div>
+                        <div className="td-idea-desc" style={{ WebkitLineClamp: 1 }}>
+                          {idea.description}
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="px-2.5 py-0.5 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
+                    <td>
+                      <span className="badge badge-default">
                         {idea.category}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
-                          <span className="text-sm font-medium text-gray-600">
-                            {idea.user?.username?.charAt(0).toUpperCase() || 'A'}
-                          </span>
+                    <td>
+                      <div className="td-user-info">
+                        <div className="td-user-avatar">
+                          {idea.user?.username?.charAt(0).toUpperCase() || 'A'}
                         </div>
-                        <div className="ml-3">
-                          <div className="text-sm font-medium text-gray-900">
+                        <div className="td-user-details">
+                          <div className="td-username">
                             {idea.user?.username || 'Anonymous'}
                           </div>
-                          <div className="text-xs text-gray-500">
+                          <div className="td-user-email">
                             {idea.user?.email || 'No email'}
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{formatDate(idea.createdAt)}</div>
+                    <td>
+                      <div className="td-date">{formatDate(idea.createdAt)}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border ${getStatusColor(idea.status)}`}>
+                    <td>
+                      <span className={getStatusBadgeClass(idea.status)}>
                         {idea.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <div className="flex justify-end space-x-2">
+                    <td>
+                      <div className="td-actions">
                         <Link
                           to={`/ideas/${idea._id}`}
-                          className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+                          className="icon-btn"
                           title="View Details"
                         >
-                          <Eye className="h-4 w-4" />
+                          <Eye className="icon-sm" />
                         </Link>
                         
                         {idea.status !== 'Approved' && (
                           <button
                             onClick={() => handleStatusChange(idea._id, 'Approved')}
                             disabled={isProcessing}
-                            className="p-2 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded-full transition-colors"
+                            className="icon-btn"
+                            style={{ color: 'var(--success)' }}
                             title="Approve Idea"
                           >
                             {isProcessing ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
+                              <Loader2 className="icon-sm spinner" />
                             ) : (
-                              <Check className="h-4 w-4" />
+                              <Check className="icon-sm" />
                             )}
                           </button>
                         )}
@@ -281,13 +260,14 @@ const AdminPanel = () => {
                           <button
                             onClick={() => handleStatusChange(idea._id, 'Rejected')}
                             disabled={isProcessing}
-                            className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
+                            className="icon-btn"
+                            style={{ color: 'var(--danger)' }}
                             title="Reject Idea"
                           >
                             {isProcessing ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
+                              <Loader2 className="icon-sm spinner" />
                             ) : (
-                              <X className="h-4 w-4" />
+                              <X className="icon-sm" />
                             )}
                           </button>
                         )}
@@ -295,13 +275,13 @@ const AdminPanel = () => {
                         <button
                           onClick={() => handleDeleteIdea(idea._id)}
                           disabled={isProcessing}
-                          className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
+                          className="icon-btn delete"
                           title="Delete Idea"
                         >
                           {isProcessing ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
+                            <Loader2 className="icon-sm spinner" />
                           ) : (
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="icon-sm" />
                           )}
                         </button>
                       </div>
@@ -315,12 +295,11 @@ const AdminPanel = () => {
       </div>
       
       {ideas.length > 0 && (
-        <div className="mt-4 flex justify-between items-center text-sm text-gray-500">
+        <div className="admin-results-info">
           <div>
-            Showing <span className="font-medium">1</span> to <span className="font-medium">{ideas.length}</span> of{' '}
-            <span className="font-medium">{ideas.length}</span> results
+            Showing <span style={{ fontWeight: 500 }}>1</span> to <span style={{ fontWeight: 500 }}>{ideas.length}</span> of{' '}
+            <span style={{ fontWeight: 500 }}>{ideas.length}</span> results
           </div>
-          {/* Pagination would go here */}
         </div>
       )}
     </div>

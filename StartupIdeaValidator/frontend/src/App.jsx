@@ -29,9 +29,9 @@ function RootRedirect() {
 
 function App() {
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
+    <div className="app-container">
       <Navbar />
-      <main className="flex-grow container mx-auto px-4 py-8">
+      <main className="main-content">
         <Routes>
           <Route path="/" element={<RootRedirect />} />
           <Route path="/manage-ideas" element={
