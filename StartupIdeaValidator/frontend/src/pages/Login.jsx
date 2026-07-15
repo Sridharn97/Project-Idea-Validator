@@ -59,7 +59,6 @@ const Login = () => {
     try {
       const userData = await login(formData);
       toast.success('Login successful! Redirecting...', {
-        icon: '👋',
         style: {
           borderRadius: '10px',
           background: '#333',

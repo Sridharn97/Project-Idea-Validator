@@ -18,7 +18,7 @@ const IdeaDetails = () => {
     fetchIdea();
   }, [id]);
 
-  // ✅ Fetch idea - uses configured axios with auth headers
+  // Fetch idea - uses configured axios with auth headers
   const fetchIdea = async () => {
     try {
       setLoading(true);
@@ -33,7 +33,7 @@ const IdeaDetails = () => {
     }
   };
 
-  // ✅ Handle vote - uses configured axios with auth headers
+  // Handle vote - uses configured axios with auth headers
   const handleVote = async (voteType) => {
     if (!isAuthenticated) {
       toast.error('Please login to vote on ideas');
@@ -55,7 +55,7 @@ const IdeaDetails = () => {
     }
   };
 
-  // ✅ Handle delete - uses configured axios with auth headers
+  // Handle delete - uses configured axios with auth headers
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this idea?')) {
       try {
@@ -71,7 +71,7 @@ const IdeaDetails = () => {
     }
   };
 
-  // ✅ Handle status change - uses configured axios with auth headers
+  // Handle status change - uses configured axios with auth headers
   const handleStatusChange = async (status) => {
     if (!isAdmin) return;
 
@@ -281,7 +281,7 @@ const IdeaDetails = () => {
         </div>
       </div>
 
-      {/* ✅ Comment Section */}
+      {/* Comment Section */}
       <CommentBox ideaId={id} />
     </div>
   );

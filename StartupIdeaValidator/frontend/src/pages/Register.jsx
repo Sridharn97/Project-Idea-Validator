@@ -93,7 +93,6 @@ const Register = () => {
       
       toast.success('Registration successful! Redirecting to dashboard...', {
         duration: 3000,
-        icon: '🎉',
       });
       navigate('/dashboard');
     } catch (error) {

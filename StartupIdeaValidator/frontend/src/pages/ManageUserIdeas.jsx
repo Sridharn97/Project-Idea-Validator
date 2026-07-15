@@ -108,9 +108,7 @@ const ManageUserIdeas = () => {
         )
       );
 
-      toast.success(`Idea ${status.toLowerCase()} successfully`, {
-        icon: status === 'Approved' ? '✅' : '❌'
-      });
+      toast.success(`Idea ${status.toLowerCase()} successfully`);
 
       // Refetch ideas if status filter is active and idea no longer matches
       if (statusFilter !== 'All' && statusFilter !== status) {
@@ -132,7 +130,7 @@ const ManageUserIdeas = () => {
         setIsProcessing(true);
         await axios.delete(`/api/admin/ideas/${ideaId}`);
         setIdeas((ideas) => ideas.filter((idea) => idea._id !== ideaId));
-        toast.success('Idea deleted successfully', { icon: '🗑️' });
+        toast.success('Idea deleted successfully');
       } catch (error) {
         toast.error(error.response?.data?.message || 'Failed to delete idea');
       } finally {

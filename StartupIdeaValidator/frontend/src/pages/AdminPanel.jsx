@@ -35,7 +35,7 @@ const AdminPanel = () => {
       if (searchQuery) params.search = searchQuery;
 
       console.log('Making admin panel ideas request with params:', params);
-      // ✅ API call now uses full backend URL automatically
+      // API call now uses full backend URL automatically
       const response = await axios.get('/api/admin/ideas', { params });
       console.log('Admin panel ideas fetched successfully:', response.data);
       setIdeas(response.data);
@@ -68,9 +68,7 @@ const AdminPanel = () => {
         )
       );
 
-      toast.success(`Idea ${status.toLowerCase()} successfully`, {
-        icon: status === 'Approved' ? '✅' : '❌'
-      });
+      toast.success(`Idea ${status.toLowerCase()} successfully`);
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to update status');
     } finally {
@@ -84,7 +82,7 @@ const AdminPanel = () => {
         setIsProcessing(true);
         await axios.delete(`/api/admin/ideas/${ideaId}`);
         setIdeas((ideas) => ideas.filter((idea) => idea._id !== ideaId));
-        toast.success('Idea deleted successfully', { icon: '🗑️' });
+        toast.success('Idea deleted successfully');
       } catch (error) {
         toast.error(error.response?.data?.message || 'Failed to delete idea');
       } finally {

@@ -45,7 +45,7 @@ const Dashboard = () => {
     }
   }, [window.location.pathname, ideas]);
 
-  // ✅ Fetch all ideas of the logged-in user with retry logic
+  // Fetch all ideas of the logged-in user with retry logic
   const fetchUserIdeas = async (retryCount = 0) => {
     try {
       setLoading(true);
@@ -71,7 +71,7 @@ const Dashboard = () => {
     }
   };
 
-  // ✅ Fetch specific idea for editing
+  // Fetch specific idea for editing
   const fetchIdeaToEdit = async (ideaId) => {
     try {
       const response = await axios.get(`/api/ideas/${ideaId}`);
@@ -123,7 +123,7 @@ const Dashboard = () => {
     }
   };
 
-  // ✅ Delete idea
+  // Delete idea
   const handleDeleteIdea = async (ideaId) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this idea?');
     if (!confirmDelete) return;
