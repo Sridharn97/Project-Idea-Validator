@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }) => {
       let errorMessage = 'Registration failed';
       
       if (err.code === 'ECONNABORTED') {
-        errorMessage = 'Request timed out. The server may be starting up. Please try again in a moment.';
+        errorMessage = 'Request timed out. The server may be starting up. Your account might have been created successfully. Please try logging in.';
       } else if (err.code === 'ERR_NETWORK') {
         errorMessage = 'Network error: Unable to reach the server. Please check your connection.';
       } else if (err.response?.status === 404) {

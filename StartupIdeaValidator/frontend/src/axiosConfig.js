@@ -85,7 +85,10 @@ const retryRequest = async (config, retryCount = 0) => {
     return await axios(config);
   } catch (error) {
     // Retry on timeout or network errors
-    if ((error.code === 'ECONNABORTED' || error.code === 'ERR_NETWORK' || error.response?.status === 404) && retryCount < maxRetries) {
+    // Only retry idempotent requests (like GET) to prevent duplicate POST submissions
+    const isIdempotent = !config.method || config.method.toLowerCase() === 'get';
+    
+    if (isIdempotent && (error.code === 'ECONNABORTED' || error.code === 'ERR_NETWORK' || error.response?.status === 404) && retryCount < maxRetries) {
       console.log(`Retrying request (attempt ${retryCount + 1}/${maxRetries})...`);
       
       // On first retry, try to wake up the backend if it's a timeout or 404
