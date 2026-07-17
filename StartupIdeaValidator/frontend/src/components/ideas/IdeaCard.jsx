@@ -81,8 +81,7 @@ const IdeaCard = ({ idea, onVote, onDelete, showActions = true }) => {
           </span>
         </div>
 
-        <p className="idea-desc">{idea.description}</p>
-        
+
         <div className="idea-tags">
           {idea.category && (
             <span className="idea-tag">

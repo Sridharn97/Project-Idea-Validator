@@ -194,7 +194,7 @@ const AdminPanel = () => {
           </div>
         ) : (
           <div className="admin-table-responsive">
-            <table className="admin-table">
+            <table className="admin-table clean-table">
               <thead>
                 <tr>
                   <th>Idea Title</th>
@@ -209,13 +209,8 @@ const AdminPanel = () => {
                 {currentItems.map(idea => (
                   <tr key={idea._id}>
                     <td>
-                      <div className="td-idea-details">
-                        <div className="td-idea-title">
-                          <Link to={`/ideas/${idea._id}`}>{idea.title}</Link>
-                        </div>
-                        <div className="td-idea-desc" style={{ WebkitLineClamp: 1 }}>
-                          {idea.description}
-                        </div>
+                      <div className="td-idea-title">
+                        <Link to={`/ideas/${idea._id}`}>{idea.title}</Link>
                       </div>
                     </td>
                     <td>
@@ -260,8 +255,7 @@ const AdminPanel = () => {
                           <button
                             onClick={() => handleStatusChange(idea._id, 'Approved')}
                             disabled={isProcessing}
-                            className="icon-btn"
-                            style={{ color: 'var(--success)' }}
+                            className="icon-btn success"
                             title="Approve Idea"
                           >
                             {isProcessing ? (
@@ -276,8 +270,7 @@ const AdminPanel = () => {
                           <button
                             onClick={() => handleStatusChange(idea._id, 'Rejected')}
                             disabled={isProcessing}
-                            className="icon-btn"
-                            style={{ color: 'var(--danger)' }}
+                            className="icon-btn danger"
                             title="Reject Idea"
                           >
                             {isProcessing ? (

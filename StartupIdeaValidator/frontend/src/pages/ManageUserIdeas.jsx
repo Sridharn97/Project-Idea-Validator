@@ -324,7 +324,7 @@ const ManageUserIdeas = () => {
           </div>
         ) : (
           <div className="admin-table-responsive">
-            <table className="admin-table">
+            <table className="admin-table clean-table">
               <thead>
                 <tr>
                   <th>Idea Details</th>
@@ -342,9 +342,6 @@ const ManageUserIdeas = () => {
                       <div className="td-idea-details">
                         <div className="td-idea-title">
                           <Link to={`/ideas/${idea._id}`}>{idea.title}</Link>
-                        </div>
-                        <div className="td-idea-desc">
-                          {idea.description}
                         </div>
                         {idea.techStack && idea.techStack.length > 0 && (
                           <div className="td-tech-tags">
