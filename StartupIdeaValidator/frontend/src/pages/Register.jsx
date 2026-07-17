@@ -115,7 +115,17 @@ const Register = () => {
 
   return (
     <div className="auth-page">
-      <div className="auth-card-container">
+      <div className="auth-split-layout">
+        <div className="auth-image-side">
+          <img src="/startup-auth-bg.png" alt="Startup idea validation community" className="auth-image" />
+          <div className="auth-image-overlay"></div>
+          <div className="auth-image-content">
+            <h2 className="auth-image-title">Launch With Confidence</h2>
+            <p className="auth-image-desc">Join our community of builders and visionaries. Validate your ideas before you build and find perfect product-market fit.</p>
+          </div>
+        </div>
+        <div className="auth-form-side">
+          <div className="auth-card-container">
         <div className="auth-card">
           <div className="auth-header">
             <h2 className="auth-title">Join StartupValidator</h2>
@@ -124,136 +134,137 @@ const Register = () => {
           
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="auth-field-row">
-              {/* Username Field */}
-              <div className="form-group">
-                <label htmlFor="username" className="form-label" style={{ display: 'flex', alignItems: 'center' }}>
-                  <User className="icon-sm" style={{ marginRight: '0.5rem', color: 'var(--primary)' }} />
-                  Username
-                </label>
-                <input
-                  type="text"
-                  id="username"
-                  name="username"
-                  value={formData.username}
-                  onChange={handleChange}
-                  className={`auth-input ${errors.username ? 'has-error' : ''}`}
-                  placeholder="john_doe"
-                />
-                {errors.username && (
-                  <p className="form-error animate-fade-in">{errors.username}</p>
-                )}
-              </div>
-              
-              {/* Email Field */}
-              <div className="form-group">
-                <label htmlFor="email" className="form-label" style={{ display: 'flex', alignItems: 'center' }}>
-                  <Mail className="icon-sm" style={{ marginRight: '0.5rem', color: 'var(--primary)' }} />
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className={`auth-input ${errors.email ? 'has-error' : ''}`}
-                  placeholder="you@example.com"
-                />
-                {errors.email && (
-                  <p className="form-error animate-fade-in">{errors.email}</p>
-                )}
-              </div>
-              
-              {/* Password Field */}
-              <div className="form-group">
-                <label htmlFor="password" className="form-label" style={{ display: 'flex', alignItems: 'center' }}>
-                  <Lock className="icon-sm" style={{ marginRight: '0.5rem', color: 'var(--primary)' }} />
-                  Password
-                </label>
-                <div className="auth-input-wrapper">
+              <div className="auth-grid-2">
+                {/* Username Field */}
+                <div className="form-group">
+                  <label htmlFor="username" className="form-label" style={{ display: 'flex', alignItems: 'center' }}>
+                    <User className="icon-sm" style={{ marginRight: '0.4rem', color: 'var(--primary)' }} />
+                    Username
+                  </label>
                   <input
-                    type={showPassword ? 'text' : 'password'}
-                    id="password"
-                    name="password"
-                    value={formData.password}
+                    type="text"
+                    id="username"
+                    name="username"
+                    value={formData.username}
                     onChange={handleChange}
-                    className={`auth-input ${errors.password ? 'has-error' : ''}`}
-                    placeholder="••••••••"
+                    className={`auth-input ${errors.username ? 'has-error' : ''}`}
+                    placeholder="john_doe"
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="password-toggle"
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  >
-                    {showPassword ? <EyeOff className="icon-sm" /> : <Eye className="icon-sm" />}
-                  </button>
+                  {errors.username && (
+                    <p className="form-error animate-fade-in">{errors.username}</p>
+                  )}
                 </div>
                 
-                <div style={{ marginTop: '0.75rem', padding: '0.75rem', background: 'var(--bg-body)', borderRadius: 'var(--radius-md)' }}>
-                  <p style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
-                    PASSWORD REQUIREMENTS
-                  </p>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                    {passwordCriteria.map((criterion, index) => (
-                      <div key={index} style={{ display: 'flex', alignItems: 'center', fontSize: '0.875rem' }}>
-                        {criterion.test(formData.password) ? (
-                          <Check className="icon-sm" style={{ color: 'var(--success)', marginRight: '0.5rem' }} />
-                        ) : (
-                          <X className="icon-sm" style={{ color: 'var(--text-muted)', marginRight: '0.5rem' }} />
-                        )}
-                        <span style={{ color: criterion.test(formData.password) ? 'var(--success)' : 'var(--text-secondary)' }}>
-                          {criterion.label}
-                        </span>
-                      </div>
-                    ))}
+                {/* Email Field */}
+                <div className="form-group">
+                  <label htmlFor="email" className="form-label" style={{ display: 'flex', alignItems: 'center' }}>
+                    <Mail className="icon-sm" style={{ marginRight: '0.4rem', color: 'var(--primary)' }} />
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className={`auth-input ${errors.email ? 'has-error' : ''}`}
+                    placeholder="you@example.com"
+                  />
+                  {errors.email && (
+                    <p className="form-error animate-fade-in">{errors.email}</p>
+                  )}
+                </div>
+              </div>
+              
+              {/* Passwords Row */}
+              <div className="auth-grid-2">
+                {/* Password Field */}
+                <div className="form-group">
+                  <label htmlFor="password" className="form-label" style={{ display: 'flex', alignItems: 'center' }}>
+                    <Lock className="icon-sm" style={{ marginRight: '0.4rem', color: 'var(--primary)' }} />
+                    Password
+                  </label>
+                  <div className="auth-input-wrapper">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      id="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      className={`auth-input ${errors.password ? 'has-error' : ''}`}
+                      placeholder="••••••••"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="password-toggle"
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showPassword ? <EyeOff className="icon-sm" /> : <Eye className="icon-sm" />}
+                    </button>
                   </div>
+                  {errors.password && (
+                    <p className="form-error animate-fade-in">{errors.password}</p>
+                  )}
                 </div>
                 
-                {errors.password && (
-                  <p className="form-error animate-fade-in">{errors.password}</p>
-                )}
-              </div>
-              
-              {/* Confirm Password Field */}
-              <div className="form-group">
-                <label htmlFor="confirmPassword" className="form-label" style={{ display: 'flex', alignItems: 'center' }}>
-                  <Lock className="icon-sm" style={{ marginRight: '0.5rem', color: 'var(--primary)' }} />
-                  Confirm Password
-                </label>
-                <div className="auth-input-wrapper">
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    className={`auth-input ${errors.confirmPassword ? 'has-error' : ''}`}
-                    placeholder="••••••••"
-                  />
+                {/* Confirm Password Field */}
+                <div className="form-group">
+                  <label htmlFor="confirmPassword" className="form-label" style={{ display: 'flex', alignItems: 'center' }}>
+                    <Lock className="icon-sm" style={{ marginRight: '0.4rem', color: 'var(--primary)' }} />
+                    Confirm Password
+                  </label>
+                  <div className="auth-input-wrapper">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      className={`auth-input ${errors.confirmPassword ? 'has-error' : ''}`}
+                      placeholder="••••••••"
+                    />
+                  </div>
+                  {errors.confirmPassword && (
+                    <p className="form-error animate-fade-in">{errors.confirmPassword}</p>
+                  )}
                 </div>
-                {errors.confirmPassword && (
-                  <p className="form-error animate-fade-in">{errors.confirmPassword}</p>
-                )}
+              </div>
+
+              {/* Horizontal Password Requirements (Compact) */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '-0.25rem' }}>
+                {passwordCriteria.map((criterion, index) => (
+                  <div key={index} style={{ display: 'flex', alignItems: 'center', fontSize: '0.7rem', background: 'var(--bg-body)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-full)', border: '1px solid var(--border-color)' }}>
+                    {criterion.test(formData.password) ? (
+                      <Check className="icon-sm" style={{ color: 'var(--success)', marginRight: '0.25rem', width: '0.8rem', height: '0.8rem' }} />
+                    ) : (
+                      <X className="icon-sm" style={{ color: 'var(--text-muted)', marginRight: '0.25rem', width: '0.8rem', height: '0.8rem' }} />
+                    )}
+                    <span style={{ color: criterion.test(formData.password) ? 'var(--success)' : 'var(--text-secondary)' }}>
+                      {criterion.label}
+                    </span>
+                  </div>
+                ))}
               </div>
 
               {/* Admin Code Field */}
-              <div className="form-group" style={{ paddingTop: '0.5rem' }}>
+              <div className="form-group">
                 <div className="auth-label-row">
                   <label htmlFor="adminCode" className="form-label mb-0" style={{ display: 'flex', alignItems: 'center' }}>
-                    <Key className="icon-sm" style={{ marginRight: '0.5rem', color: 'var(--primary)' }} />
+                    <Key className="icon-sm" style={{ marginRight: '0.4rem', color: 'var(--primary)' }} />
                     Admin Code
                   </label>
                   <button
                     type="button"
                     onClick={() => setIsAdmin(!isAdmin)}
                     className="auth-link"
+                    style={{ fontSize: '0.8rem' }}
                   >
                     {isAdmin ? 'Hide' : 'Register as Admin?'}
                   </button>
                 </div>
                 {isAdmin && (
-                  <div className="auth-input-wrapper">
+                  <div className="auth-input-wrapper" style={{ marginTop: '0.4rem' }}>
                     <input
                       type="password"
                       id="adminCode"
@@ -293,6 +304,8 @@ const Register = () => {
               </Link>
             </div>
           </form>
+        </div>
+          </div>
         </div>
       </div>
     </div>

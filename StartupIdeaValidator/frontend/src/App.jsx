@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import IdeaDetails from './pages/IdeaDetails';
@@ -9,31 +9,22 @@ import ManageUserIdeas from './pages/ManageUserIdeas';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import NotFound from './pages/NotFound';
+import Home from './pages/Home';
 import PrivateRoute from './components/routing/PrivateRoute';
 import AdminRoute from './components/routing/AdminRoute';
 import AuthContext from './context/AuthContext';
 
-function RootRedirect() {
-  const { isAuthenticated, isAdmin } = useContext(AuthContext);
-  
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-  
-  if (isAdmin) {
-    return <Navigate to="/manage-ideas" replace />;
-  }
-  
-  return <Navigate to="/dashboard" replace />;
-}
-
 function App() {
+  const location = useLocation();
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
+  const isHomePage = location.pathname === '/';
+
   return (
     <div className="app-container">
-      <Navbar />
-      <main className="main-content">
+      {!isAuthPage && <Navbar />}
+      <main className={isAuthPage ? "auth-main" : "main-content"}>
         <Routes>
-          <Route path="/" element={<RootRedirect />} />
+          <Route path="/" element={<Home />} />
           <Route path="/manage-ideas" element={
             <AdminRoute>
               <ManageUserIdeas />
@@ -55,7 +46,7 @@ function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
-      <Footer />
+      {isHomePage && <Footer />}
     </div>
   );
 }

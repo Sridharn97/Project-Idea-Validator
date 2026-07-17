@@ -13,6 +13,10 @@ const AdminPanel = () => {
   const [statusFilter, setStatusFilter] = useState('Pending');
   const [searchQuery, setSearchQuery] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   // Fetch ideas on mount and when filters change
   useEffect(() => {
@@ -27,6 +31,11 @@ const AdminPanel = () => {
       }
     }
   }, [statusFilter, searchQuery, user?.token, authLoading]);
+  
+  // Reset pagination when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, statusFilter]);
 
   const fetchIdeas = async (retryCount = 0) => {
     try {
@@ -106,39 +115,46 @@ const AdminPanel = () => {
     }
   };
 
+  // Pagination Logic
+  const filteredIdeas = ideas; // Already filtered from backend, but if needed
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = ideas.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(ideas.length / itemsPerPage);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   return (
-    <div className="admin-page">
-      <div className="admin-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap' }}>
-        <div>
-          <h1 className="admin-title">Admin Dashboard</h1>
-          <p className="admin-subtitle">Manage and review submitted ideas</p>
+    <div className="admin-page animate-fade-in">
+      <div className="admin-header">
+        <h1 className="admin-title text-gradient">Admin Dashboard</h1>
+        <p className="admin-subtitle">Manage and review submitted ideas</p>
+      </div>
+      
+      <div className="filters-bar">
+        <div className="search-input-wrapper">
+          <Search className="search-icon icon-sm" />
+          <input
+            type="text"
+            placeholder="Search ideas..."
+            className="search-input"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
         </div>
         
-        <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
-          <div className="search-input-wrapper">
-            <Search className="search-icon icon-sm" />
-            <input
-              type="text"
-              placeholder="Search ideas..."
-              className="search-input"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          
-          <div className="filter-select-wrapper">
-            <Filter className="icon-sm" />
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="filter-select"
-            >
-              <option value="All">All Ideas</option>
-              <option value="Pending">Pending</option>
-              <option value="Approved">Approved</option>
-              <option value="Rejected">Rejected</option>
-            </select>
-          </div>
+        <div className="filter-select-wrapper">
+          <Filter className="icon-sm" />
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="filter-select"
+          >
+            <option value="All">All Ideas</option>
+            <option value="Pending">Pending</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+          </select>
         </div>
       </div>
       
@@ -190,7 +206,7 @@ const AdminPanel = () => {
                 </tr>
               </thead>
               <tbody>
-                {ideas.map(idea => (
+                {currentItems.map(idea => (
                   <tr key={idea._id}>
                     <td>
                       <div className="td-idea-details">
@@ -294,12 +310,46 @@ const AdminPanel = () => {
         )}
       </div>
       
+      {/* Results Info and Pagination */}
       {ideas.length > 0 && (
-        <div className="admin-results-info">
+        <div className="admin-results-info" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.5rem', padding: '0 1rem', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
-            Showing <span style={{ fontWeight: 500 }}>1</span> to <span style={{ fontWeight: 500 }}>{ideas.length}</span> of{' '}
-            <span style={{ fontWeight: 500 }}>{ideas.length}</span> results
+            Showing <span style={{ fontWeight: 600 }}>{indexOfFirstItem + 1}</span> to <span style={{ fontWeight: 600 }}>{Math.min(indexOfLastItem, ideas.length)}</span> of{' '}
+            <span style={{ fontWeight: 600 }}>{ideas.length}</span> results
           </div>
+          
+          {totalPages > 1 && (
+            <div className="pagination" style={{ display: 'flex', gap: '0.25rem' }}>
+              <button 
+                onClick={() => paginate(Math.max(1, currentPage - 1))}
+                disabled={currentPage === 1}
+                className="btn btn-outline"
+                style={{ padding: '0.35rem 0.75rem', fontSize: '0.85rem' }}
+              >
+                Previous
+              </button>
+              
+              {[...Array(totalPages)].map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => paginate(i + 1)}
+                  className={`btn ${currentPage === i + 1 ? 'btn-primary' : 'btn-outline'}`}
+                  style={{ padding: '0.35rem 0.75rem', fontSize: '0.85rem' }}
+                >
+                  {i + 1}
+                </button>
+              ))}
+              
+              <button 
+                onClick={() => paginate(Math.min(totalPages, currentPage + 1))}
+                disabled={currentPage === totalPages}
+                className="btn btn-outline"
+                style={{ padding: '0.35rem 0.75rem', fontSize: '0.85rem' }}
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

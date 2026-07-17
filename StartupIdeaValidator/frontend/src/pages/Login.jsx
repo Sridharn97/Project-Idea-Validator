@@ -104,7 +104,17 @@ const Login = () => {
 
   return (
     <div className="auth-page">
-      <div className="auth-card-container">
+      <div className="auth-split-layout">
+        <div className="auth-image-side">
+          <img src="/startup-auth-bg.png" alt="Startup idea validation analytics" className="auth-image" />
+          <div className="auth-image-overlay"></div>
+          <div className="auth-image-content">
+            <h2 className="auth-image-title">Validate Your Next Big Idea</h2>
+            <p className="auth-image-desc">Sign in to access your business analytics, gather community feedback, and turn your startup concepts into reality.</p>
+          </div>
+        </div>
+        <div className="auth-form-side">
+          <div className="auth-card-container">
         <div className="auth-card">
           <div className="auth-header">
             <h2 className="auth-title">Welcome Back</h2>
@@ -208,6 +218,8 @@ const Login = () => {
           <Link to="/privacy" className="auth-legal-link">
             Privacy Policy
           </Link>
+        </div>
+          </div>
         </div>
       </div>
     </div>

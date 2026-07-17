@@ -158,7 +158,7 @@ const Dashboard = () => {
     <div className="dashboard-page">
       <div className="dashboard-header">
         <div>
-          <h1 className="dashboard-title">
+          <h1 className="dashboard-title text-gradient">
             {showForm ? (
               editing ? 'Edit Your Idea' : 'Share Your New Idea'
             ) : (

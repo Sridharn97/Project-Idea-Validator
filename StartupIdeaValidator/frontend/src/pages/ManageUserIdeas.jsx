@@ -15,8 +15,17 @@ const ManageUserIdeas = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [sortBy, setSortBy] = useState('newest');
+  
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const categories = ['All', 'SaaS', 'E-commerce', 'Mobile App', 'FinTech', 'HealthTech', 'EdTech', 'Social Media', 'AI/ML', 'IoT', 'Other'];
+
+  // Reset pagination when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, statusFilter, categoryFilter, sortBy]);
 
   useEffect(() => {
     // Only wait for auth to finish loading, then fetch immediately
@@ -161,11 +170,19 @@ const ManageUserIdeas = () => {
     rejected: ideas.filter(i => i.status === 'Rejected').length,
   };
 
+  // Pagination Logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredIdeas.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredIdeas.length / itemsPerPage);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   return (
-    <div className="admin-page">
+    <div className="admin-page animate-fade-in">
       {/* Header */}
       <div className="admin-header">
-        <h1 className="admin-title">Manage User Ideas</h1>
+        <h1 className="admin-title text-gradient">Manage User Ideas</h1>
         <p className="admin-subtitle">View, review, and manage all user-submitted ideas</p>
       </div>
 
@@ -319,7 +336,7 @@ const ManageUserIdeas = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredIdeas.map(idea => (
+                {currentItems.map(idea => (
                   <tr key={idea._id}>
                     <td>
                       <div className="td-idea-details">
@@ -453,18 +470,51 @@ const ManageUserIdeas = () => {
         )}
       </div>
 
-      {/* Results Info */}
+      {/* Results Info and Pagination */}
       {filteredIdeas.length > 0 && (
-        <div className="admin-results-info">
+        <div className="admin-results-info" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.5rem', padding: '0 1rem', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
-            Showing <span style={{ fontWeight: 500 }}>1</span> to <span style={{ fontWeight: 500 }}>{filteredIdeas.length}</span> of{' '}
-            <span style={{ fontWeight: 500 }}>{filteredIdeas.length}</span> results
+            Showing <span style={{ fontWeight: 600 }}>{indexOfFirstItem + 1}</span> to <span style={{ fontWeight: 600 }}>{Math.min(indexOfLastItem, filteredIdeas.length)}</span> of{' '}
+            <span style={{ fontWeight: 600 }}>{filteredIdeas.length}</span> results
             {searchQuery && ideas.length !== filteredIdeas.length && (
               <span style={{ marginLeft: '0.5rem', opacity: 0.7 }}>
                 (filtered from {ideas.length} total)
               </span>
             )}
           </div>
+          
+          {totalPages > 1 && (
+            <div className="pagination" style={{ display: 'flex', gap: '0.25rem' }}>
+              <button 
+                onClick={() => paginate(Math.max(1, currentPage - 1))}
+                disabled={currentPage === 1}
+                className="btn btn-outline"
+                style={{ padding: '0.35rem 0.75rem', fontSize: '0.85rem' }}
+              >
+                Previous
+              </button>
+              
+              {[...Array(totalPages)].map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => paginate(i + 1)}
+                  className={`btn ${currentPage === i + 1 ? 'btn-primary' : 'btn-outline'}`}
+                  style={{ padding: '0.35rem 0.75rem', fontSize: '0.85rem' }}
+                >
+                  {i + 1}
+                </button>
+              ))}
+              
+              <button 
+                onClick={() => paginate(Math.min(totalPages, currentPage + 1))}
+                disabled={currentPage === totalPages}
+                className="btn btn-outline"
+                style={{ padding: '0.35rem 0.75rem', fontSize: '0.85rem' }}
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>
