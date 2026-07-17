@@ -13,35 +13,31 @@ if (typeof window !== 'undefined') {
 axios.defaults.baseURL = backendURL;
 axios.defaults.withCredentials = false;
 
-// Add request interceptor to log requests and attach auth token
+// Add request interceptor to attach auth token
 axios.interceptors.request.use(
-  request => {
-    // Automatically attach token if it exists in localStorage to prevent React useEffect race conditions
+  config => {
     try {
       const storedUser = localStorage.getItem('user');
       if (storedUser) {
         const user = JSON.parse(storedUser);
         if (user && user.token) {
-          if (request.headers && typeof request.headers.set === 'function') {
-            request.headers.set('Authorization', `Bearer ${user.token}`);
-          } else {
-            request.headers['Authorization'] = `Bearer ${user.token}`;
-          }
+          // Explicitly set header on the config object
+          config.headers['Authorization'] = `Bearer ${user.token}`;
         }
       }
     } catch (e) {
-      // Ignore JSON parse errors
+      console.error('Error parsing user from localStorage', e);
     }
 
     if (import.meta.env.DEV) {
       console.log('Starting Request:', {
-        url: request.url,
-        method: request.method,
-        baseURL: request.baseURL,
-        headers: request.headers
+        url: config.url,
+        method: config.method,
+        baseURL: config.baseURL,
+        headers: config.headers
       });
     }
-    return request;
+    return config;
   },
   error => {
     console.error('Request Error:', error);
