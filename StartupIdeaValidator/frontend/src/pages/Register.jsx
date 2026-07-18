@@ -1,17 +1,13 @@
 import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Check, X, User, Mail, Lock, Key, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Check, X, Loader2, Lightbulb } from 'lucide-react';
 import AuthContext from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import './Auth.css';
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    adminCode: ''
+    username: '', email: '', password: '', confirmPassword: '', adminCode: ''
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -20,61 +16,27 @@ const Register = () => {
   const { register } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  // Password validation criteria
   const passwordCriteria = [
-    { label: 'At least 6 characters', test: (pass) => pass.length >= 6 },
-    { label: 'Contains a number', test: (pass) => /\d/.test(pass) },
-    { label: 'Contains a letter', test: (pass) => /[a-zA-Z]/.test(pass) },
+    { label: 'At least 6 characters', test: (p) => p.length >= 6 },
+    { label: 'Contains a number',     test: (p) => /\d/.test(p) },
+    { label: 'Contains a letter',     test: (p) => /[a-zA-Z]/.test(p) },
   ];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-    
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors({
-        ...errors,
-        [name]: '',
-      });
-    }
+    setFormData({ ...formData, [name]: value });
+    if (errors[name]) setErrors({ ...errors, [name]: '' });
   };
 
   const validate = () => {
     const newErrors = {};
-    const emailRegex = /^\S+@\S+\.\S+$/;
-
-    if (!formData.username.trim()) {
-      newErrors.username = 'Username is required';
-    } else if (formData.username.trim().length < 3) {
-      newErrors.username = 'Username must be at least 3 characters';
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!emailRegex.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
-    }
-
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } else {
-      const failedCriteria = passwordCriteria.filter(
-        criterion => !criterion.test(formData.password)
-      );
-      
-      if (failedCriteria.length > 0) {
-        newErrors.password = 'Password does not meet the requirements';
-      }
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
-    }
-
+    if (!formData.username.trim()) newErrors.username = 'Username is required';
+    else if (formData.username.trim().length < 3) newErrors.username = 'At least 3 characters';
+    if (!formData.email.trim()) newErrors.email = 'Email is required';
+    else if (!/^\S+@\S+\.\S+$/.test(formData.email)) newErrors.email = 'Enter a valid email';
+    if (!formData.password) newErrors.password = 'Password is required';
+    else if (passwordCriteria.some(c => !c.test(formData.password))) newErrors.password = 'Password does not meet requirements';
+    if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -82,32 +44,15 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
-
     setIsSubmitting(true);
     try {
-      await register({
-        username: formData.username,
-        email: formData.email,
-        password: formData.password,
-        adminCode: formData.adminCode
-      });
-      
-      toast.success('Registration successful! Redirecting to dashboard...', {
-        duration: 3000,
-      });
+      await register({ username: formData.username, email: formData.email, password: formData.password, adminCode: formData.adminCode });
+      toast.success('Account created! Welcome 🎉');
       navigate('/dashboard');
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Registration failed';
-      toast.error(errorMessage, {
-        duration: 4000,
-      });
-      
-      if (errorMessage === 'User already exists') {
-        setErrors({
-          ...errors,
-          email: 'This email is already registered',
-        });
-      }
+      const msg = error.response?.data?.message || 'Registration failed';
+      toast.error(msg);
+      if (msg === 'User already exists') setErrors({ ...errors, email: 'Email already registered' });
     } finally {
       setIsSubmitting(false);
     }
@@ -115,32 +60,23 @@ const Register = () => {
 
   return (
     <div className="auth-page">
-      <div className="auth-split-layout">
-        <div className="auth-image-side">
-          <img src="/startup-auth-bg.png" alt="Startup idea validation community" className="auth-image" />
-          <div className="auth-image-overlay"></div>
-          <div className="auth-image-content">
-            <h2 className="auth-image-title">Launch With Confidence</h2>
-            <p className="auth-image-desc">Join our community of builders and visionaries. Validate your ideas before you build and find perfect product-market fit.</p>
-          </div>
-        </div>
-        <div className="auth-form-side">
-          <div className="auth-card-container">
+      <div className="auth-card-container" style={{ maxWidth: '28rem' }}>
         <div className="auth-card">
           <div className="auth-header">
-            <h2 className="auth-title">Join StartupValidator</h2>
-            <p className="auth-subtitle">Create your account to get started</p>
+            <Link to="/" className="auth-brand-link">
+              <Lightbulb className="auth-brand-icon icon-sm" />
+              <span className="auth-brand-name">StartupValidator</span>
+            </Link>
+            <h2 className="auth-title">Create an account</h2>
+            <p className="auth-subtitle">Join thousands of founders validating their ideas</p>
           </div>
-          
+
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="auth-field-row">
               <div className="auth-grid-2">
-                {/* Username Field */}
+                {/* Username */}
                 <div className="form-group">
-                  <label htmlFor="username" className="form-label" style={{ display: 'flex', alignItems: 'center' }}>
-                    <User className="icon-sm" style={{ marginRight: '0.4rem', color: 'var(--primary)' }} />
-                    Username
-                  </label>
+                  <label htmlFor="username" className="form-label">Username</label>
                   <input
                     type="text"
                     id="username"
@@ -150,17 +86,12 @@ const Register = () => {
                     className={`auth-input ${errors.username ? 'has-error' : ''}`}
                     placeholder="john_doe"
                   />
-                  {errors.username && (
-                    <p className="form-error animate-fade-in">{errors.username}</p>
-                  )}
+                  {errors.username && <p className="form-error animate-fade-in">{errors.username}</p>}
                 </div>
-                
-                {/* Email Field */}
+
+                {/* Email */}
                 <div className="form-group">
-                  <label htmlFor="email" className="form-label" style={{ display: 'flex', alignItems: 'center' }}>
-                    <Mail className="icon-sm" style={{ marginRight: '0.4rem', color: 'var(--primary)' }} />
-                    Email
-                  </label>
+                  <label htmlFor="email" className="form-label">Email</label>
                   <input
                     type="email"
                     id="email"
@@ -170,20 +101,14 @@ const Register = () => {
                     className={`auth-input ${errors.email ? 'has-error' : ''}`}
                     placeholder="you@example.com"
                   />
-                  {errors.email && (
-                    <p className="form-error animate-fade-in">{errors.email}</p>
-                  )}
+                  {errors.email && <p className="form-error animate-fade-in">{errors.email}</p>}
                 </div>
               </div>
-              
-              {/* Passwords Row */}
+
               <div className="auth-grid-2">
-                {/* Password Field */}
+                {/* Password */}
                 <div className="form-group">
-                  <label htmlFor="password" className="form-label" style={{ display: 'flex', alignItems: 'center' }}>
-                    <Lock className="icon-sm" style={{ marginRight: '0.4rem', color: 'var(--primary)' }} />
-                    Password
-                  </label>
+                  <label htmlFor="password" className="form-label">Password</label>
                   <div className="auth-input-wrapper">
                     <input
                       type={showPassword ? 'text' : 'password'}
@@ -193,118 +118,95 @@ const Register = () => {
                       onChange={handleChange}
                       className={`auth-input ${errors.password ? 'has-error' : ''}`}
                       placeholder="••••••••"
+                      style={{ paddingRight: '2.75rem' }}
                     />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="password-toggle"
-                      aria-label={showPassword ? 'Hide password' : 'Show password'}
-                    >
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="password-toggle">
                       {showPassword ? <EyeOff className="icon-sm" /> : <Eye className="icon-sm" />}
                     </button>
                   </div>
-                  {errors.password && (
-                    <p className="form-error animate-fade-in">{errors.password}</p>
-                  )}
+                  {errors.password && <p className="form-error animate-fade-in">{errors.password}</p>}
                 </div>
-                
-                {/* Confirm Password Field */}
+
+                {/* Confirm Password */}
                 <div className="form-group">
-                  <label htmlFor="confirmPassword" className="form-label" style={{ display: 'flex', alignItems: 'center' }}>
-                    <Lock className="icon-sm" style={{ marginRight: '0.4rem', color: 'var(--primary)' }} />
-                    Confirm Password
-                  </label>
-                  <div className="auth-input-wrapper">
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      id="confirmPassword"
-                      name="confirmPassword"
-                      value={formData.confirmPassword}
-                      onChange={handleChange}
-                      className={`auth-input ${errors.confirmPassword ? 'has-error' : ''}`}
-                      placeholder="••••••••"
-                    />
-                  </div>
-                  {errors.confirmPassword && (
-                    <p className="form-error animate-fade-in">{errors.confirmPassword}</p>
-                  )}
+                  <label htmlFor="confirmPassword" className="form-label">Confirm</label>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    className={`auth-input ${errors.confirmPassword ? 'has-error' : ''}`}
+                    placeholder="••••••••"
+                  />
+                  {errors.confirmPassword && <p className="form-error animate-fade-in">{errors.confirmPassword}</p>}
                 </div>
               </div>
 
-              {/* Horizontal Password Requirements (Compact) */}
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '-0.25rem' }}>
-                {passwordCriteria.map((criterion, index) => (
-                  <div key={index} style={{ display: 'flex', alignItems: 'center', fontSize: '0.7rem', background: 'var(--bg-body)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-full)', border: '1px solid var(--border-color)' }}>
-                    {criterion.test(formData.password) ? (
-                      <Check className="icon-sm" style={{ color: 'var(--success)', marginRight: '0.25rem', width: '0.8rem', height: '0.8rem' }} />
-                    ) : (
-                      <X className="icon-sm" style={{ color: 'var(--text-muted)', marginRight: '0.25rem', width: '0.8rem', height: '0.8rem' }} />
-                    )}
-                    <span style={{ color: criterion.test(formData.password) ? 'var(--success)' : 'var(--text-secondary)' }}>
-                      {criterion.label}
+              {/* Password criteria */}
+              {formData.password && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.375rem' }}>
+                  {passwordCriteria.map((c, i) => (
+                    <span
+                      key={i}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: '0.2rem',
+                        fontSize: '0.72rem', fontWeight: 600, padding: '0.2rem 0.5rem',
+                        borderRadius: '9999px',
+                        background: c.test(formData.password) ? '#f0fdf4' : '#f9fafb',
+                        color: c.test(formData.password) ? '#065f46' : '#9ca3af',
+                        border: `1px solid ${c.test(formData.password) ? '#a7f3d0' : '#e5e7eb'}`,
+                        transition: 'all 0.2s',
+                      }}
+                    >
+                      {c.test(formData.password)
+                        ? <Check style={{ width: '0.65rem', height: '0.65rem' }} />
+                        : <X style={{ width: '0.65rem', height: '0.65rem' }} />
+                      }
+                      {c.label}
                     </span>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
 
-              {/* Admin Code Field */}
+              {/* Admin Code */}
               <div className="form-group">
-                <div className="auth-label-row">
-                  <label htmlFor="adminCode" className="form-label mb-0" style={{ display: 'flex', alignItems: 'center' }}>
-                    <Key className="icon-sm" style={{ marginRight: '0.4rem', color: 'var(--primary)' }} />
-                    Admin Code
-                  </label>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.3rem' }}>
+                  <label className="form-label" style={{ marginBottom: 0 }}>Admin Code</label>
                   <button
                     type="button"
                     onClick={() => setIsAdmin(!isAdmin)}
                     className="auth-link"
-                    style={{ fontSize: '0.8rem' }}
+                    style={{ fontSize: '0.75rem' }}
                   >
-                    {isAdmin ? 'Hide' : 'Register as Admin?'}
+                    {isAdmin ? 'Cancel' : 'Register as Admin?'}
                   </button>
                 </div>
                 {isAdmin && (
-                  <div className="auth-input-wrapper" style={{ marginTop: '0.4rem' }}>
-                    <input
-                      type="password"
-                      id="adminCode"
-                      name="adminCode"
-                      value={formData.adminCode}
-                      onChange={handleChange}
-                      className="auth-input"
-                      placeholder="Enter admin code"
-                    />
-                  </div>
+                  <input
+                    type="password"
+                    id="adminCode"
+                    name="adminCode"
+                    value={formData.adminCode}
+                    onChange={handleChange}
+                    className="auth-input"
+                    placeholder="Enter admin code"
+                  />
                 )}
               </div>
             </div>
-            
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="auth-submit-btn"
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="icon-md spinner" style={{ marginRight: '0.5rem' }} />
-                  Processing...
-                </>
-              ) : (
-                'Create Account'
-              )}
+
+            <button type="submit" disabled={isSubmitting} className="auth-submit-btn">
+              {isSubmitting
+                ? <><Loader2 className="icon-sm spinner" /> Creating Account...</>
+                : 'Create Account'
+              }
             </button>
-            
-            <div className="auth-footer-text">
-              Already have an account?{' '}
-              <Link 
-                to="/login" 
-                className="auth-footer-link"
-              >
-                Sign in
-              </Link>
-            </div>
           </form>
-        </div>
+
+          <div className="auth-footer-text">
+            Already have an account?
+            <Link to="/login" className="auth-footer-link">Sign in</Link>
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X, Lightbulb, LogOut, User } from 'lucide-react';
+import { Menu, X, Lightbulb, LogOut, User, LayoutDashboard, Shield } from 'lucide-react';
 import AuthContext from '../../context/AuthContext';
 import './Navbar.css';
 
@@ -12,6 +12,7 @@ const Navbar = () => {
   const handleLogout = () => {
     logout();
     navigate('/');
+    setIsMenuOpen(false);
   };
 
   return (
@@ -21,67 +22,44 @@ const Navbar = () => {
           {/* Logo */}
           <Link to="/" className="navbar-logo">
             <Lightbulb className="logo-icon" />
-            <span className="logo-text">
-              ProjectInsight
-            </span>
+            <span className="logo-text">StartupValidator</span>
           </Link>
 
           {/* Desktop Navigation */}
           <div className="navbar-desktop">
             {isAdmin && (
-              <Link
-                to="/manage-ideas"
-                className="nav-link"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Manage Ideas
-              </Link>
+              <>
+                <Link to="/manage-ideas" className="nav-link">Manage Ideas</Link>
+                <Link to="/admin" className="nav-link">Admin Panel</Link>
+              </>
             )}
 
+            {isAuthenticated && !isAdmin && (
+              <Link to="/dashboard" className="nav-link">Dashboard</Link>
+            )}
 
             {isAuthenticated ? (
-              <>
-                {!isAdmin && (
-                  <Link
-                    to="/dashboard"
-                    className="nav-link"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Dashboard
-                  </Link>
-                )}
-
-
-                {isAdmin && (
-                  <Link to="/admin" className="nav-link">
-                    Admin Panel
-                  </Link>
-                )}
-
-                <div className="navbar-user-menu">
-                  <span className="user-greeting">
-                    Welcome, {user?.username}
-                  </span>
-                  <button onClick={handleLogout} className="btn btn-primary btn-logout">
-                    <LogOut className="icon-sm" />
-                    <span>Logout</span>
-                  </button>
-                </div>
-              </>
+              <div className="navbar-user-menu">
+                <span className="user-greeting">{user?.username}</span>
+                <button onClick={handleLogout} className="btn btn-secondary btn-logout">
+                  <LogOut className="icon-sm" />
+                  Logout
+                </button>
+              </div>
             ) : (
               <div className="navbar-auth">
                 <Link to="/login" className="nav-link nav-login">
                   <User className="icon-sm" />
-                  <span>Login</span>
+                  Login
                 </Link>
-                <Link to="/register" className="btn btn-secondary">
-                  Register
+                <Link to="/register" className="btn btn-primary" style={{ fontSize: '0.8rem', padding: '0.45rem 1rem' }}>
+                  Get Started
                 </Link>
               </div>
             )}
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Button */}
           <div className="navbar-mobile-btn">
             <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="menu-btn">
               {isMenuOpen ? <X className="icon-md" /> : <Menu className="icon-md" />}
@@ -93,66 +71,27 @@ const Navbar = () => {
         {isMenuOpen && (
           <div className="navbar-mobile-menu">
             {isAdmin && (
-              <Link
-                to="/manage-ideas"
-                className="mobile-nav-link"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Manage Ideas
-              </Link>
+              <>
+                <Link to="/manage-ideas" className="mobile-nav-link" onClick={() => setIsMenuOpen(false)}>Manage Ideas</Link>
+                <Link to="/admin" className="mobile-nav-link" onClick={() => setIsMenuOpen(false)}>Admin Panel</Link>
+              </>
+            )}
+
+            {isAuthenticated && !isAdmin && (
+              <Link to="/dashboard" className="mobile-nav-link" onClick={() => setIsMenuOpen(false)}>Dashboard</Link>
             )}
 
             {isAuthenticated ? (
               <>
-                <Link
-                  to="/dashboard"
-                  className="mobile-nav-link"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Dashboard
-                </Link>
-
-                {isAdmin && (
-                  <Link
-                    to="/admin"
-                    className="mobile-nav-link"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Admin Panel
-                  </Link>
-                )}
-
-                <div className="mobile-user-greeting">
-                  Welcome, {user?.username}
-                </div>
-
-                <button
-                  onClick={() => {
-                    handleLogout();
-                    setIsMenuOpen(false);
-                  }}
-                  className="mobile-nav-link mobile-logout"
-                >
-                  <LogOut className="icon-sm" />
-                  <span>Logout</span>
+                <div className="mobile-user-greeting">Signed in as {user?.username}</div>
+                <button onClick={handleLogout} className="mobile-nav-link mobile-logout">
+                  <LogOut className="icon-sm" /> Logout
                 </button>
               </>
             ) : (
               <>
-                <Link
-                  to="/login"
-                  className="mobile-nav-link"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Login
-                </Link>
-                <Link
-                  to="/register"
-                  className="mobile-nav-link mobile-register"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Register
-                </Link>
+                <Link to="/login" className="mobile-nav-link" onClick={() => setIsMenuOpen(false)}>Login</Link>
+                <Link to="/register" className="mobile-nav-link mobile-register" onClick={() => setIsMenuOpen(false)}>Get Started</Link>
               </>
             )}
           </div>

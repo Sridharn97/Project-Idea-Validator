@@ -1,214 +1,190 @@
+/* ══════════════════════════════════════
+   IDEA CARD — CLEAN LIGHT THEME
+══════════════════════════════════════ */
+
 .idea-card {
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--glass-border);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  transition: all var(--transition-bounce);
+  transition: all var(--transition);
   display: flex;
   flex-direction: column;
 }
 
 .idea-card:hover {
+  border-color: var(--border-strong);
   box-shadow: var(--shadow-lg);
-  transform: translateY(-4px);
-  border-color: rgba(255, 255, 255, 0.9);
+  transform: translateY(-2px);
 }
 
 .idea-card-body {
-  padding: 1.75rem;
+  padding: 1.25rem;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  gap: 0.875rem;
 }
 
+/* Header */
 .idea-card-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 1rem;
-  margin-bottom: 1.25rem;
+  gap: 0.75rem;
 }
 
-.idea-card-title-group {
-  flex: 1;
-}
+.idea-card-title-group { flex: 1; }
 
 .idea-card-title {
-  font-size: 1.35rem;
+  font-size: 1rem;
   font-weight: 700;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   color: var(--text-primary);
-  margin-bottom: 0.5rem;
-  transition: color var(--transition-fast);
-  line-height: 1.3;
+  margin-bottom: 0.3rem;
+  line-height: 1.35;
 }
 
-.idea-card:hover .idea-card-title {
-  color: var(--primary);
-}
-
-.idea-card-title a {
-  text-decoration: none;
-}
-
-.idea-card-title a:hover {
-  text-decoration: underline;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 4px;
-}
+.idea-card-title a { text-decoration: none; color: inherit; }
+.idea-card-title a:hover { color: var(--primary); }
 
 .idea-card-meta {
+  font-size: 0.78rem;
+  color: var(--text-muted);
   display: flex;
   align-items: center;
-  font-size: 0.9rem;
-  color: var(--text-secondary);
+  flex-wrap: wrap;
+  gap: 0.2rem;
 }
 
-.idea-author {
-  font-weight: 600;
-  color: var(--text-primary);
-  font-family: 'Outfit', sans-serif;
-}
+.idea-author { font-weight: 600; color: var(--text-secondary); }
+.meta-dot { color: var(--text-muted); }
 
-.meta-dot {
-  margin: 0 0.5rem;
-  color: var(--text-muted);
-}
-
+/* Description */
 .idea-desc {
+  font-size: 0.875rem;
   color: var(--text-secondary);
-  margin-bottom: 1.5rem;
   line-height: 1.6;
-  font-size: 1rem;
-  /* Line clamp 3 */
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
 }
 
+/* Tags */
 .idea-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
+  gap: 0.4rem;
+  margin-top: auto;
 }
 
 .idea-tag {
-  font-size: 0.8rem;
-  font-family: 'Outfit', sans-serif;
+  font-size: 0.7rem;
   font-weight: 600;
-  padding: 0.375rem 0.875rem;
+  padding: 0.2rem 0.6rem;
   border-radius: var(--radius-full);
-  background: rgba(79, 70, 229, 0.1);
-  color: var(--primary);
-  border: 1px solid rgba(79, 70, 229, 0.2);
-  transition: all var(--transition-fast);
+  background: var(--bg-muted);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  transition: all var(--transition);
 }
 
-.idea-tag:hover {
-  background: var(--primary);
-  color: white;
-}
+.idea-tag:hover { background: var(--primary-light); color: var(--primary); border-color: var(--primary-border); }
 
 .idea-tag-tech {
-  background: rgba(236, 72, 153, 0.1);
-  color: var(--accent);
-  border: 1px solid rgba(236, 72, 153, 0.2);
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
 }
 
-.idea-tag-tech:hover {
-  background: var(--accent);
-  color: white;
+.idea-tag-cofounders {
+  background: var(--success-light) !important;
+  color: #065f46 !important;
+  border-color: var(--success-border) !important;
 }
 
+/* Card Footer */
 .idea-card-footer {
+  padding: 0.75rem 1.25rem;
+  background: var(--bg-body);
+  border-top: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 1.25rem;
-  border-top: 1px solid rgba(0,0,0,0.05);
-  margin-top: auto;
+  gap: 0.5rem;
 }
 
 .idea-actions {
   display: flex;
-  gap: 1rem;
+  gap: 0.25rem;
+  flex-wrap: wrap;
 }
 
 .idea-action-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.875rem;
-  border-radius: var(--radius-full);
-  color: var(--text-secondary);
+  gap: 0.3rem;
+  padding: 0.35rem 0.625rem;
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
   font-weight: 600;
-  font-family: 'Outfit', sans-serif;
-  transition: all var(--transition-fast);
-  background: rgba(255,255,255,0.5);
+  font-size: 0.78rem;
+  transition: all var(--transition);
+  background: transparent;
   border: 1px solid transparent;
+  cursor: pointer;
 }
 
 .idea-action-btn:hover:not(:disabled) {
-  background: white;
-  color: var(--text-primary);
-  box-shadow: var(--shadow-sm);
-  border-color: rgba(0,0,0,0.05);
-  transform: translateY(-2px);
+  background: var(--bg-muted);
+  color: var(--text-secondary);
+  border-color: var(--border);
 }
 
-.idea-action-btn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
+.idea-action-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
+/* Upvote active */
 .btn-upvote.active {
   background: var(--success-light);
-  color: var(--success-hover);
-  border-color: rgba(16, 185, 129, 0.2);
+  color: #065f46;
+  border-color: var(--success-border);
 }
 
-.btn-upvote.active svg {
-  fill: var(--success);
-}
-
+/* Downvote active */
 .btn-downvote.active {
   background: var(--danger-light);
-  color: var(--danger-hover);
-  border-color: rgba(239, 68, 68, 0.2);
+  color: #991b1b;
+  border-color: var(--danger-border);
 }
 
-.btn-downvote.active svg {
-  fill: var(--danger);
-}
-
-.idea-admin-actions {
-  display: flex;
-  gap: 0.5rem;
-}
+/* Owner / Admin actions */
+.idea-admin-actions { display: flex; gap: 0.25rem; }
 
 .admin-action-btn {
-  padding: 0.5rem;
-  border-radius: var(--radius-full);
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: var(--radius-md);
   color: var(--text-muted);
-  transition: all var(--transition-fast);
-  background: white;
-  border: 1px solid transparent;
+  transition: all var(--transition);
+  background: transparent;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
 .admin-action-btn:hover {
   color: var(--primary);
   background: var(--primary-light);
-  border-color: rgba(79, 70, 229, 0.2);
-  transform: translateY(-2px);
+  border-color: var(--primary-border);
 }
 
 .admin-action-btn.delete:hover {
   color: var(--danger);
   background: var(--danger-light);
-  border-color: rgba(239, 68, 68, 0.2);
+  border-color: var(--danger-border);
 }
