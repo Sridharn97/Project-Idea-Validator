@@ -33,7 +33,7 @@
   gap: 0.4rem;
 }
 
-.logo-icon-sm { width: 1.2rem; height: 1.2rem; color: var(--primary); }
+.logo-icon-sm { width: auto; height: 1.5rem; border-radius: var(--radius-sm); filter: drop-shadow(0 2px 4px rgba(79, 70, 229, 0.2)); }
 
 .logo-text-footer {
   font-family: 'Plus Jakarta Sans', sans-serif;

@@ -38,9 +38,9 @@
 }
 
 .logo-icon {
-  height: 1.6rem;
-  width: 1.6rem;
-  color: var(--primary);
+  height: 2rem;
+  width: auto;
+  border-radius: var(--radius-sm);
   filter: drop-shadow(0 2px 4px rgba(79, 70, 229, 0.2));
 }
 

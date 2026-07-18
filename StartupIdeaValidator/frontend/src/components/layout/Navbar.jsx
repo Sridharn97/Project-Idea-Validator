@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X, Lightbulb, LogOut, User, LayoutDashboard, Shield } from 'lucide-react';
+import { Menu, X, LogOut, User, LayoutDashboard, Shield } from 'lucide-react';
+import logoImg from '../../assets/logo.png';
 import AuthContext from '../../context/AuthContext';
 import './Navbar.css';
 
@@ -21,7 +22,7 @@ const Navbar = () => {
         <div className="navbar-inner">
           {/* Logo */}
           <Link to="/" className="navbar-logo">
-            <Lightbulb className="logo-icon" />
+            <img src={logoImg} alt="StartupValidator Logo" className="logo-icon" />
             <span className="logo-text">StartupValidator</span>
           </Link>
 

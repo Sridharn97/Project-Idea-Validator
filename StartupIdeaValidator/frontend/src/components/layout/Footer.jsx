@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Lightbulb, Github, Twitter, Linkedin } from 'lucide-react';
+import { Github, Twitter, Linkedin } from 'lucide-react';
+import logoImg from '../../assets/logo.png';
 import './Footer.css';
 
 const Footer = () => {
@@ -13,7 +14,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="footer-brand-col">
             <Link to="/" className="footer-logo">
-              <Lightbulb className="logo-icon-sm" />
+              <img src={logoImg} alt="StartupValidator Logo" className="logo-icon-sm" />
               <span className="logo-text-footer">StartupValidator</span>
             </Link>
             <p className="footer-desc">
