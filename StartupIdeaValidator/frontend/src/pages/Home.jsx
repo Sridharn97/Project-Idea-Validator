@@ -42,35 +42,50 @@ const Home = () => {
       {/* HERO */}
       <section className="hp-hero">
         <div className="hp-container">
-          <div className="hp-badge">
-            <span className="hp-badge-dot" />
-            Community Feedback Platform
-          </div>
-
-          <h1 className="hp-headline">
-            Validate Your Startup Idea<br />
-            <span className="hp-headline-accent">Before You Build</span>
-          </h1>
-
-          <p className="hp-sub">
-            Put your startup concepts in front of experienced builders and get honest feedback to find product-market fit.
-          </p>
-
-
-
-          <div className="hp-social-proof">
-            <div className="hp-avatars">
-              {['JD', 'AS', 'MK', 'RB'].map((init) => (
-                <div key={init} className="hp-avatar">{init}</div>
-              ))}
-            </div>
-            <div>
-              <div className="hp-stars">
-                {[1,2,3,4,5].map(i => (
-                  <Star key={i} className="icon-sm" style={{ fill: '#fbbf24', color: '#fbbf24' }} />
-                ))}
+          <div className="hp-hero-layout">
+            <div className="hp-hero-content">
+              <div className="hp-badge">
+                <span className="hp-badge-dot" />
+                Community Feedback Platform
               </div>
-              <p className="hp-social-text">Trusted by <strong>12,000+</strong> founders</p>
+
+              <h1 className="hp-headline">
+                Validate Your Startup Idea<br />
+                <span className="hp-headline-accent">Before You Build</span>
+              </h1>
+
+              <p className="hp-sub">
+                Put your startup concepts in front of experienced builders and get honest feedback to find product-market fit.
+              </p>
+
+              <div className="hp-hero-actions">
+                <Link to="/register" className="btn btn-primary" style={{ padding: '0.75rem 1.5rem' }}>Start Validating Free</Link>
+                <Link to="/login" className="btn btn-secondary" style={{ padding: '0.75rem 1.5rem' }}>Sign In</Link>
+              </div>
+
+              <div className="hp-social-proof">
+                <div className="hp-avatars">
+                  {['JD', 'AS', 'MK', 'RB'].map((init) => (
+                    <div key={init} className="hp-avatar">{init}</div>
+                  ))}
+                </div>
+                <div>
+                  <div className="hp-stars">
+                    {[1,2,3,4,5].map(i => (
+                      <Star key={i} className="icon-sm" style={{ fill: '#fbbf24', color: '#fbbf24' }} />
+                    ))}
+                  </div>
+                  <p className="hp-social-text">Trusted by <strong>12,000+</strong> founders</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="hp-hero-image-wrapper">
+              <img 
+                src="https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&q=80" 
+                alt="Startup founder working on laptop" 
+                className="hp-hero-img"
+              />
             </div>
           </div>
         </div>

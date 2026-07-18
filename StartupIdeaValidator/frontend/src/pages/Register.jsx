@@ -60,9 +60,24 @@ const Register = () => {
 
   return (
     <div className="auth-page">
-      <div className="auth-card-container" style={{ maxWidth: '28rem' }}>
-        <div className="auth-card">
-          <div className="auth-header">
+      <div className="auth-image-panel">
+        <img 
+          src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80" 
+          alt="Team collaborating" 
+          className="auth-image" 
+        />
+        <div className="auth-image-overlay">
+          <div>
+            <p className="auth-quote">"We saved 6 months of development time by validating our idea here first."</p>
+            <span className="auth-quote-author">— Sarah J., Founder</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="auth-content">
+        <div className="auth-card-container register-container">
+          <div className="auth-card">
+            <div className="auth-header">
             <Link to="/" className="auth-brand-link">
               <Lightbulb className="auth-brand-icon icon-sm" />
               <span className="auth-brand-name">StartupValidator</span>
@@ -207,6 +222,7 @@ const Register = () => {
           <div className="auth-footer-text">
             Already have an account?
             <Link to="/login" className="auth-footer-link">Sign in</Link>
+          </div>
           </div>
         </div>
       </div>

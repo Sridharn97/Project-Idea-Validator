@@ -1,11 +1,14 @@
 /* ── NAVBAR ── */
 .navbar {
-  background: #ffffff;
-  border-bottom: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: var(--shadow-xs);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02), 0 4px 12px rgba(0,0,0,0.01);
+  transition: all var(--transition);
 }
 
 .navbar-container {
@@ -18,7 +21,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 4rem;
+  height: 4.5rem;
 }
 
 /* Logo */
@@ -27,41 +30,50 @@
   align-items: center;
   gap: 0.5rem;
   text-decoration: none;
+  transition: transform 0.2s ease;
+}
+
+.navbar-logo:hover {
+  transform: translateY(-1px);
 }
 
 .logo-icon {
-  height: 1.5rem;
-  width: 1.5rem;
+  height: 1.6rem;
+  width: 1.6rem;
   color: var(--primary);
+  filter: drop-shadow(0 2px 4px rgba(79, 70, 229, 0.2));
 }
 
 .logo-text {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 800;
-  font-size: 1.15rem;
+  font-size: 1.2rem;
   color: var(--text-primary);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
 }
 
 /* Desktop Nav */
 .navbar-desktop {
   display: none;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.5rem;
 }
 @media (min-width: 768px) { .navbar-desktop { display: flex; } }
 
 .nav-link {
   color: var(--text-secondary);
-  font-weight: 500;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 600;
   font-size: 0.875rem;
-  padding: 0.4rem 0.75rem;
+  padding: 0.5rem 0.875rem;
   border-radius: var(--radius-md);
-  transition: all var(--transition);
+  transition: all 0.2s ease;
+  letter-spacing: 0.01em;
 }
+
 .nav-link:hover {
-  color: var(--text-primary);
-  background: var(--bg-muted);
+  color: var(--primary);
+  background: var(--primary-light);
 }
 
 /* Auth / User section */
@@ -69,14 +81,14 @@
 .navbar-auth {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
   margin-left: 0.5rem;
-  padding-left: 1rem;
+  padding-left: 1.25rem;
   border-left: 1px solid var(--border);
 }
 
 .user-greeting {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--text-secondary);
   font-weight: 500;
 }
@@ -97,43 +109,59 @@
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition);
 }
 .menu-btn:hover { background: var(--bg-muted); color: var(--text-primary); }
 
 .navbar-mobile-menu {
   display: flex;
   flex-direction: column;
-  padding: 0.5rem 0 1rem;
+  padding: 1rem 0 1.5rem;
   border-top: 1px solid var(--border);
-  animation: fadeIn 0.2s ease;
+  animation: fadeIn 0.25s ease;
+  gap: 0.25rem;
 }
 @media (min-width: 768px) { .navbar-mobile-menu { display: none; } }
 
 .mobile-nav-link {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.65rem 0.75rem;
+  gap: 0.6rem;
+  padding: 0.75rem 1rem;
   color: var(--text-secondary);
-  font-weight: 500;
-  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.95rem;
   border-radius: var(--radius-md);
   transition: all var(--transition);
 }
+
 .mobile-nav-link:hover {
-  background: var(--bg-muted);
-  color: var(--text-primary);
+  background: var(--primary-light);
+  color: var(--primary);
 }
 
 .mobile-user-greeting {
-  padding: 0.65rem 0.75rem;
+  padding: 0.75rem 1rem;
   color: var(--text-muted);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   border-top: 1px solid var(--border);
-  margin-top: 0.25rem;
+  margin-top: 0.5rem;
 }
 
-.mobile-logout { color: var(--danger); }
+.mobile-logout { color: var(--danger); margin-top: 0.5rem;}
 .mobile-logout:hover { background: var(--danger-light); color: var(--danger); }
 
-.mobile-register { color: var(--primary); }
+.mobile-register { 
+  color: white;
+  background: var(--primary);
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+.mobile-register:hover {
+  background: var(--primary-hover);
+  color: white;
+}

@@ -54,9 +54,24 @@ const Login = () => {
 
   return (
     <div className="auth-page">
-      <div className="auth-card-container">
-        <div className="auth-card">
-          <div className="auth-header">
+      <div className="auth-image-panel">
+        <img 
+          src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80" 
+          alt="Clean workspace" 
+          className="auth-image" 
+        />
+        <div className="auth-image-overlay">
+          <div>
+            <p className="auth-quote">"Validation is the first step to building something that actually matters."</p>
+            <span className="auth-quote-author">— StartupValidator</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="auth-content">
+        <div className="auth-card-container">
+          <div className="auth-card">
+            <div className="auth-header">
             <Link to="/" className="auth-brand-link">
               <Lightbulb className="auth-brand-icon icon-sm" />
               <span className="auth-brand-name">StartupValidator</span>
@@ -113,6 +128,7 @@ const Login = () => {
           <div className="auth-footer-text">
             Don't have an account?
             <Link to="/register" className="auth-footer-link">Create one free</Link>
+          </div>
           </div>
         </div>
       </div>
