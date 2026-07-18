@@ -2,7 +2,9 @@ import express from 'express';
 import { 
   registerUser, 
   loginUser, 
-  getUserProfile 
+  getUserProfile,
+  updateUserProfile,
+  saveIdea
 } from '../controllers/authController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
@@ -14,5 +16,7 @@ router.post('/login', loginUser);
 
 // Protected routes
 router.get('/profile', protect, getUserProfile);
+router.put('/profile', protect, updateUserProfile);
+router.post('/save-idea/:id', protect, saveIdea);
 
 export default router;

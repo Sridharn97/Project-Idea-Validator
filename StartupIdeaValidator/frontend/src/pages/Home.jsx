@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Lightbulb, Target, Rocket, ArrowRight, ShieldCheck, Users, CheckCircle, Search, Star } from 'lucide-react';
+import { Lightbulb, Target, Rocket, ArrowRight, ShieldCheck, Users, CheckCircle, Search, Star, Loader, Filter } from 'lucide-react';
+import axios from '../axiosConfig';
+import IdeaCard from '../components/ideas/IdeaCard';
+import toast from 'react-hot-toast';
 import './Home.css';
 
 const stats = [
@@ -38,6 +41,35 @@ const steps = [
 ];
 
 const Home = () => {
+  const [ideas, setIdeas] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState('');
+  const [category, setCategory] = useState('');
+  const [sortBy, setSortBy] = useState('trending');
+
+  useEffect(() => {
+    fetchIdeas();
+  }, [category, sortBy]); // Fetch on filter change
+
+  const fetchIdeas = async (searchQuery = search) => {
+    try {
+      setLoading(true);
+      const res = await axios.get('/api/ideas', {
+        params: { search: searchQuery, category, sortBy }
+      });
+      setIdeas(res.data);
+    } catch (err) {
+      toast.error('Failed to load ideas');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    fetchIdeas(search);
+  };
+
   return (
     <div className="sq-page">
       
@@ -66,15 +98,21 @@ const Home = () => {
             </p>
 
             {/* Action Bar (Replaces Search Bar) */}
-            <div className="sq-hero-action-bar">
-              <div className="sq-action-text">
-                <Search className="icon-sm text-primary" />
-                <span>Ready to validate your next big idea?</span>
+            <form className="sq-hero-action-bar" onSubmit={handleSearchSubmit} style={{ display: 'flex', background: 'white', padding: '0.5rem', borderRadius: '0.5rem', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}>
+              <div className="sq-action-text" style={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
+                <Search className="icon-sm text-primary" style={{ marginLeft: '0.5rem' }} />
+                <input 
+                  type="text" 
+                  placeholder="Search for an idea, tech stack..." 
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  style={{ border: 'none', outline: 'none', padding: '0.5rem', width: '100%', marginLeft: '0.5rem' }}
+                />
               </div>
-              <Link to="/register" className="sq-action-btn">
-                Get Started Free
-              </Link>
-            </div>
+              <button type="submit" className="sq-action-btn" style={{ borderRadius: '0.25rem', padding: '0.5rem 1rem' }}>
+                Search
+              </button>
+            </form>
 
             {/* Social proof */}
             <div className="sq-social-proof">
@@ -202,6 +240,73 @@ const Home = () => {
               <img src="/startup-auth-bg.png" alt="Validation Process" className="sq-highlight-image" />
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ======================== IDEAS FEED ======================== */}
+      <section className="sq-features-section" style={{ backgroundColor: '#f9fafb' }}>
+        <div className="sq-container">
+          <div className="sq-section-header" style={{ marginBottom: '2rem' }}>
+            <h2 className="sq-section-title sq-text-title">Explore Startup Ideas</h2>
+            
+            <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', background: 'white', padding: '0.5rem 1rem', borderRadius: '0.5rem', border: '1px solid #e5e7eb' }}>
+                <Filter className="icon-sm text-gray-500 mr-2" />
+                <select 
+                  value={category} 
+                  onChange={(e) => setCategory(e.target.value)}
+                  style={{ border: 'none', outline: 'none', background: 'transparent' }}
+                >
+                  <option value="">All Categories</option>
+                  <option value="SaaS">SaaS</option>
+                  <option value="E-commerce">E-commerce</option>
+                  <option value="Mobile App">Mobile App</option>
+                  <option value="FinTech">FinTech</option>
+                  <option value="HealthTech">HealthTech</option>
+                  <option value="EdTech">EdTech</option>
+                  <option value="Social Media">Social Media</option>
+                  <option value="AI/ML">AI/ML</option>
+                  <option value="IoT">IoT</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', background: 'white', padding: '0.5rem 1rem', borderRadius: '0.5rem', border: '1px solid #e5e7eb' }}>
+                <select 
+                  value={sortBy} 
+                  onChange={(e) => setSortBy(e.target.value)}
+                  style={{ border: 'none', outline: 'none', background: 'transparent' }}
+                >
+                  <option value="trending">🔥 Trending</option>
+                  <option value="newest">✨ Newest</option>
+                  <option value="oldest">🕰️ Oldest</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {loading ? (
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem 0' }}>
+              <Loader className="spinner" style={{ width: '3rem', height: '3rem', color: 'var(--primary)' }} />
+            </div>
+          ) : ideas.length > 0 ? (
+            <div className="dashboard-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>
+              {ideas.map((idea) => (
+                <div key={idea._id} style={{ background: 'white', borderRadius: '0.5rem', overflow: 'hidden', border: '1px solid #e5e7eb', boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1)' }}>
+                  <IdeaCard 
+                    idea={idea} 
+                    onVote={() => fetchIdeas()}
+                  />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="empty-state" style={{ background: 'white', padding: '4rem', borderRadius: '0.5rem', textAlign: 'center' }}>
+              <Lightbulb className="icon-md" style={{ margin: '0 auto 1rem', color: '#9ca3af' }} />
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 600 }}>No ideas found</h3>
+              <p style={{ color: '#6b7280', marginTop: '0.5rem' }}>Try adjusting your filters or search query.</p>
+            </div>
+          )}
         </div>
       </section>
 

@@ -5,12 +5,21 @@ import Idea from '../models/Idea.js';
 // @access  Public
 export const getIdeas = async (req, res) => {
   try {
-    const { category, status } = req.query;
+    const { category, status, search, sortBy } = req.query;
     let query = {};
 
     // Filter by category if provided
     if (category) {
       query.category = category;
+    }
+
+    // Filter by search term
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: 'i' } },
+        { description: { $regex: search, $options: 'i' } },
+        { techStack: { $regex: search, $options: 'i' } }
+      ];
     }
 
     // Check if user is admin - admins can see all ideas regardless of status
@@ -26,10 +35,18 @@ export const getIdeas = async (req, res) => {
     }
     // If admin and no status filter, don't set status filter (show all statuses)
 
+    // Sorting logic
+    let sortObj = { createdAt: -1 };
+    if (sortBy === 'trending') {
+      sortObj = { 'votes.up': -1, createdAt: -1 };
+    } else if (sortBy === 'oldest') {
+      sortObj = { createdAt: 1 };
+    }
+
     // Fetch ideas with the query
     const ideas = await Idea.find(query)
       .populate('user', 'username email')
-      .sort({ createdAt: -1 });
+      .sort(sortObj);
 
     res.json(ideas);
   } catch (error) {
@@ -77,7 +94,7 @@ export const getIdeaById = async (req, res) => {
 // @access  Private
 export const createIdea = async (req, res) => {
   try {
-    const { title, description, category, techStack, visibility } = req.body;
+    const { title, description, category, techStack, visibility, lookingForCoFounders } = req.body;
 
     const idea = await Idea.create({
       title,
@@ -85,6 +102,7 @@ export const createIdea = async (req, res) => {
       category,
       techStack,
       visibility: visibility || 'public',
+      lookingForCoFounders: lookingForCoFounders || false,
       user: req.user._id,
       status: 'Pending'
     });
@@ -101,7 +119,7 @@ export const createIdea = async (req, res) => {
 // @access  Private
 export const updateIdea = async (req, res) => {
   try {
-    const { title, description, category, techStack, visibility } = req.body;
+    const { title, description, category, techStack, visibility, lookingForCoFounders } = req.body;
     const idea = await Idea.findById(req.params.id);
 
     if (!idea) {
@@ -121,6 +139,7 @@ export const updateIdea = async (req, res) => {
         category: category || idea.category,
         techStack: techStack || idea.techStack,
         visibility: visibility || idea.visibility,
+        lookingForCoFounders: lookingForCoFounders !== undefined ? lookingForCoFounders : idea.lookingForCoFounders,
         status: 'Pending' // Reset to pending after edit
       },
       { new: true }
@@ -237,6 +256,46 @@ export const getUserIdeas = async (req, res) => {
       .sort({ createdAt: -1 });
 
     res.json(ideas);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// @desc    Report an idea
+// @route   POST /api/ideas/:id/report
+// @access  Private
+export const reportIdea = async (req, res) => {
+  try {
+    const { reason } = req.body;
+    const idea = await Idea.findById(req.params.id);
+
+    if (!idea) {
+      return res.status(404).json({ message: 'Idea not found' });
+    }
+
+    // Check if user already reported
+    const alreadyReported = idea.reports.find(
+      (r) => r.user.toString() === req.user._id.toString()
+    );
+
+    if (alreadyReported) {
+      return res.status(400).json({ message: 'You have already reported this idea' });
+    }
+
+    idea.reports.push({
+      user: req.user._id,
+      reason: reason || 'Inappropriate content'
+    });
+
+    // Auto-flag if more than 5 reports
+    if (idea.reports.length > 5 && idea.status !== 'Rejected') {
+      idea.status = 'Pending';
+    }
+
+    await idea.save();
+
+    res.json({ message: 'Idea reported successfully' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });

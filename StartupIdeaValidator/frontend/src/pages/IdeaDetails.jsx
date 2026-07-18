@@ -5,6 +5,7 @@ import axios from '../axiosConfig';
 import toast from 'react-hot-toast';
 import CommentBox from '../components/comments/CommentBox';
 import AuthContext from '../context/AuthContext';
+import DOMPurify from 'dompurify';
 import './IdeaDetails.css';
 
 const IdeaDetails = () => {
@@ -127,6 +128,11 @@ const IdeaDetails = () => {
     }
   };
 
+  // Sanitize HTML description
+  const createMarkup = (html) => {
+    return { __html: DOMPurify.sanitize(html) };
+  };
+
   return (
     <div className="idea-details-page">
       <div>
@@ -200,9 +206,10 @@ const IdeaDetails = () => {
             </div>
           )}
 
-          <div className="idea-description-content">
-            {idea.description}
-          </div>
+          <div 
+            className="idea-description-content quill-content"
+            dangerouslySetInnerHTML={createMarkup(idea.description)}
+          />
 
           <div className="idea-details-section">
             <h3 className="section-title">Category:</h3>

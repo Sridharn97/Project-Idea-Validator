@@ -6,7 +6,8 @@ import {
   updateIdea,
   deleteIdea,
   voteIdea,
-  getUserIdeas
+  getUserIdeas,
+  reportIdea
 } from '../controllers/ideaController.js';
 import { protect, optionalAuth } from '../middleware/authMiddleware.js';
 
@@ -24,5 +25,6 @@ router.post('/', protect, createIdea);
 router.put('/:id', protect, updateIdea);
 router.delete('/:id', protect, deleteIdea);
 router.post('/:id/vote', protect, voteIdea);
+router.post('/:id/report', protect, reportIdea);
 
 export default router;

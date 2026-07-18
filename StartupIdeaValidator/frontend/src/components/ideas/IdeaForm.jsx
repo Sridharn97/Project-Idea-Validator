@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { X, AlertCircle } from 'lucide-react';
 import axios from '../../axiosConfig';
 import toast from 'react-hot-toast';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import './IdeaForm.css';
 
 const CATEGORIES = [
@@ -16,6 +18,7 @@ const IdeaForm = ({ idea = null, onSuccess, onCancel }) => {
     category: '',
     techStack: [],
     visibility: 'public',
+    lookingForCoFounders: false,
     agreedToTerms: false
   });
   const [techInput, setTechInput] = useState('');
@@ -30,6 +33,7 @@ const IdeaForm = ({ idea = null, onSuccess, onCancel }) => {
         category: idea.category || '',
         techStack: idea.techStack || [],
         visibility: idea.visibility || 'public',
+        lookingForCoFounders: idea.lookingForCoFounders || false,
         agreedToTerms: true
       });
     }
@@ -47,6 +51,16 @@ const IdeaForm = ({ idea = null, onSuccess, onCancel }) => {
         ...errors,
         [name]: ''
       });
+    }
+  };
+
+  const handleDescriptionChange = (content) => {
+    setFormData({
+      ...formData,
+      description: content
+    });
+    if (errors.description) {
+      setErrors({ ...errors, description: '' });
     }
   };
 
@@ -87,8 +101,9 @@ const IdeaForm = ({ idea = null, onSuccess, onCancel }) => {
     const newErrors = {};
     if (!formData.title.trim()) newErrors.title = 'Title is required';
     if (formData.title.length > 100) newErrors.title = 'Title must be 100 characters or less';
-    if (!formData.description.trim()) newErrors.description = 'Description is required';
-    if (formData.description.length > 2000) newErrors.description = 'Description must be 2000 characters or less';
+    if (!formData.description || formData.description.replace(/<[^>]*>?/gm, '').trim().length === 0) {
+      newErrors.description = 'Description is required';
+    }
     if (!formData.category) newErrors.category = 'Category is required';
     if (formData.techStack.length === 0) newErrors.techStack = 'At least one technology is required';
     if (!formData.agreedToTerms) newErrors.agreedToTerms = 'You must agree to the terms of use';
@@ -151,17 +166,16 @@ const IdeaForm = ({ idea = null, onSuccess, onCancel }) => {
         <label htmlFor="description" className="form-label">
           Description *
         </label>
-        <textarea
-          id="description"
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-          placeholder="Describe your startup idea in detail..."
-          rows="5"
-          className={`form-input ${errors.description ? 'has-error' : ''}`}
-          style={{ resize: 'vertical' }}
-        ></textarea>
-        {errors.description && <p className="form-error">{errors.description}</p>}
+        <div className={errors.description ? 'quill-error' : ''}>
+          <ReactQuill 
+            theme="snow" 
+            value={formData.description} 
+            onChange={handleDescriptionChange}
+            placeholder="Describe your startup idea in detail..."
+            className="bg-white"
+          />
+        </div>
+        {errors.description && <p className="form-error mt-1">{errors.description}</p>}
       </div>
 
       {/* Category */}
@@ -227,6 +241,25 @@ const IdeaForm = ({ idea = null, onSuccess, onCancel }) => {
           </button>
         </div>
         {errors.techStack && <p className="form-error">{errors.techStack}</p>}
+      </div>
+
+      {/* Co-founders */}
+      <div className="form-group" style={{ marginBottom: '1rem' }}>
+        <label className="checkbox-label">
+          <input
+            type="checkbox"
+            name="lookingForCoFounders"
+            checked={formData.lookingForCoFounders}
+            onChange={handleChange}
+            className="form-checkbox"
+          />
+          <span className="checkbox-text" style={{ fontWeight: 600 }}>
+            Looking for Co-founders
+          </span>
+        </label>
+        <p className="text-sm text-gray-500 mt-1" style={{ fontSize: '0.85rem', color: '#6b7280', marginLeft: '1.75rem' }}>
+          Check this if you are actively looking for developers, designers, or marketers to build this idea.
+        </p>
       </div>
 
       {/* Terms */}

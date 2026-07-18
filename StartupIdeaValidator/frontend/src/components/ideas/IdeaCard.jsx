@@ -1,6 +1,6 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ThumbsUp, ThumbsDown, MessageSquare, Edit, Trash } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, MessageSquare, Edit, Trash, Bookmark, Flag, Users } from 'lucide-react';
 import axios from '../../axiosConfig';
 import AuthContext from '../../context/AuthContext';
 import toast from 'react-hot-toast';
@@ -10,6 +10,13 @@ const IdeaCard = ({ idea, onVote, onDelete, showActions = true }) => {
   const { isAuthenticated, user } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const [activeVote, setActiveVote] = useState(null);
+  const [isSaved, setIsSaved] = useState(false);
+
+  useEffect(() => {
+    if (user && user.savedIdeas) {
+      setIsSaved(user.savedIdeas.includes(idea._id));
+    }
+  }, [user, idea._id]);
 
   const handleVote = async (voteType) => {
     if (!isAuthenticated) {
@@ -39,6 +46,36 @@ const IdeaCard = ({ idea, onVote, onDelete, showActions = true }) => {
       } catch (error) {
         toast.error(error.response?.data?.message || 'Failed to delete idea');
       }
+    }
+  };
+
+  const handleSave = async () => {
+    if (!isAuthenticated) {
+      toast.error('Please login to save ideas');
+      return;
+    }
+    try {
+      const response = await axios.post(`/api/auth/save-idea/${idea._id}`);
+      setIsSaved(!isSaved);
+      toast.success(response.data.message);
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to save idea');
+    }
+  };
+
+  const handleReport = async () => {
+    if (!isAuthenticated) {
+      toast.error('Please login to report ideas');
+      return;
+    }
+    const reason = window.prompt('Why are you reporting this idea?');
+    if (!reason) return;
+
+    try {
+      await axios.post(`/api/ideas/${idea._id}/report`, { reason });
+      toast.success('Idea reported successfully');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to report idea');
     }
   };
 
@@ -88,6 +125,11 @@ const IdeaCard = ({ idea, onVote, onDelete, showActions = true }) => {
               {idea.category}
             </span>
           )}
+          {idea.lookingForCoFounders && (
+            <span className="idea-tag idea-tag-cofounders" style={{ backgroundColor: '#eef2ff', color: '#4f46e5', border: '1px solid #c7d2fe' }}>
+              <Users size={12} style={{ marginRight: '4px' }} /> Co-founders wanted
+            </span>
+          )}
           {idea.techStack && idea.techStack.map((tech, index) => (
             <span key={index} className="idea-tag idea-tag-tech">
               {tech}
@@ -121,6 +163,20 @@ const IdeaCard = ({ idea, onVote, onDelete, showActions = true }) => {
                 <MessageSquare className="icon-sm" />
                 <span>Comments</span>
               </Link>
+              <button
+                onClick={handleSave}
+                className={`idea-action-btn ${isSaved ? 'active' : ''}`}
+                title={isSaved ? 'Unsave idea' : 'Save idea'}
+              >
+                <Bookmark className="icon-sm" fill={isSaved ? 'currentColor' : 'none'} />
+              </button>
+              <button
+                onClick={handleReport}
+                className="idea-action-btn"
+                title="Report idea"
+              >
+                <Flag className="icon-sm" />
+              </button>
             </div>
 
             {isAuthenticated && user?._id === idea.user?._id && (

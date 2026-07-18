@@ -100,3 +100,69 @@ export const getUserProfile = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+// @desc    Update user profile
+// @route   PUT /api/auth/profile
+// @access  Private
+export const updateUserProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (user) {
+      user.username = req.body.username || user.username;
+      user.email = req.body.email || user.email;
+      user.bio = req.body.bio !== undefined ? req.body.bio : user.bio;
+      user.githubLink = req.body.githubLink !== undefined ? req.body.githubLink : user.githubLink;
+
+      if (req.body.password) {
+        user.password = req.body.password;
+      }
+
+      const updatedUser = await user.save();
+
+      res.json({
+        _id: updatedUser._id,
+        username: updatedUser.username,
+        email: updatedUser.email,
+        bio: updatedUser.bio,
+        githubLink: updatedUser.githubLink,
+        role: updatedUser.role,
+        token: generateToken(updatedUser._id),
+      });
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// @desc    Save/Bookmark an idea
+// @route   POST /api/auth/save-idea/:id
+// @access  Private
+export const saveIdea = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const ideaId = req.params.id;
+    
+    // Toggle save status
+    if (user.savedIdeas.includes(ideaId)) {
+      user.savedIdeas = user.savedIdeas.filter(id => id.toString() !== ideaId.toString());
+      await user.save();
+      res.json({ message: 'Idea removed from saved list', savedIdeas: user.savedIdeas });
+    } else {
+      user.savedIdeas.push(ideaId);
+      await user.save();
+      res.json({ message: 'Idea saved successfully', savedIdeas: user.savedIdeas });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};

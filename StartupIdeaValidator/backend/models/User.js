@@ -42,6 +42,19 @@ const UserSchema = new mongoose.Schema({
       type: Date
     }
   },
+  bio: {
+    type: String,
+    maxlength: 500,
+    trim: true
+  },
+  githubLink: {
+    type: String,
+    trim: true
+  },
+  savedIdeas: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Idea'
+  }],
   createdAt: {
     type: Date,
     default: Date.now
