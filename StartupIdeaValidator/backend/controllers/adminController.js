@@ -102,3 +102,36 @@ export const deleteComment = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+// @desc    Get dashboard statistics
+// @route   GET /api/admin/stats
+// @access  Private/Admin
+export const getDashboardStats = async (req, res) => {
+  try {
+    const totalIdeas = await Idea.countDocuments();
+    
+    // Using import for User model since it wasn't imported yet
+    const { default: User } = await import('../models/User.js');
+    const totalUsers = await User.countDocuments();
+
+    const ideasByStatus = await Idea.aggregate([
+      { $group: { _id: '$status', value: { $sum: 1 } } },
+      { $project: { name: '$_id', value: 1, _id: 0 } }
+    ]);
+
+    const ideasByCategory = await Idea.aggregate([
+      { $group: { _id: '$category', value: { $sum: 1 } } },
+      { $project: { name: '$_id', value: 1, _id: 0 } }
+    ]);
+
+    res.json({
+      totalIdeas,
+      totalUsers,
+      ideasByStatus,
+      ideasByCategory
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error fetching stats' });
+  }
+};

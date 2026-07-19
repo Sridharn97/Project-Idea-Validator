@@ -3,7 +3,8 @@ import {
   getAllIdeas,
   updateIdeaStatus,
   deleteIdea,
-  deleteComment
+  deleteComment,
+  getDashboardStats
 } from '../controllers/adminController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
 
@@ -13,6 +14,7 @@ const router = express.Router();
 router.use(protect, admin);
 
 router.get('/ideas', getAllIdeas);
+router.get('/stats', getDashboardStats);
 router.put('/ideas/:id/status', updateIdeaStatus);
 router.delete('/ideas/:id', deleteIdea);
 router.delete('/comments/:id', deleteComment);
